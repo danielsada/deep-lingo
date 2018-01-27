@@ -46,6 +46,8 @@ namespace DeepLingo {
         VAR_STRING,
         // En este lenguaje, 42 es TRUE.
         TRUE,
+        //Esto es que algo fallo
+        ILLEGAL_CHAR,
     }
 }
 
