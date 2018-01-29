@@ -90,7 +90,6 @@ namespace DeepLingo {
                 {"GreaterOrEqual", TokenType.GOET},
                 {"Equals", TokenType.EQUALS},
                 {"NotEquals", TokenType.NOT_EQUALS},
-                {"GreaterOrEqual", TokenType.GOET},
                 {"Mul", TokenType.MUL},
                 {"Neg", TokenType.NOT},
                 {"Mod", TokenType.MOD},
@@ -98,8 +97,7 @@ namespace DeepLingo {
                 {"ParLeft", TokenType.PARENTHESIS_OPEN},
                 {"ParRight", TokenType.PARENTHESIS_CLOSE},
                 {"Plus", TokenType.SUM},
-                {"True", TokenType.TRUE},
-                {"False", TokenType.FALSE}                
+                {"True", TokenType.TRUE}
             };
 
         public Scanner(string input) {

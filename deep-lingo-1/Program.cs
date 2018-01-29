@@ -8,18 +8,22 @@ namespace DeepLingo {
 
         const string VERSION = "0.1";
 
-        void Run(string[] args) {
+        void Run (string[] args) {
 
-            Console.WriteLine("Don't panic, use deep lingo");
-            Console.WriteLine();
+            Console.WriteLine ("Don't panic, use deep lingo");
+            Console.WriteLine ();
 
             if (args.Length != 1) {
-                Console.Error.WriteLine(
+                Console.Error.WriteLine (
                     "Please specify the name of the input file.");
-                Environment.Exit(1);
+                Environment.Exit (1);
             }
 
-            try {            
+            if (args[0] == "test") {
+                ScannerTest tests = new ScannerTest();
+                tests.RunTests ();
+            } else {
+               try {            
                 var inputPath = args[0];                
                 var input = File.ReadAllText(inputPath);
                 
@@ -36,11 +40,12 @@ namespace DeepLingo {
             } catch (FileNotFoundException e) {
                 Console.Error.WriteLine(e.Message);
                 Environment.Exit(1);
-            }                
+            }  
+            }
         }
 
-        public static void Main(string[] args) {
-            new Program().Run(args);
+        public static void Main (string[] args) {
+            new Program ().Run (args);
         }
     }
 }

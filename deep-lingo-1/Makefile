@@ -16,8 +16,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-deeplingo.exe: Program.cs Scanner.cs Token.cs TokenType.cs               
-	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs
+deeplingo.exe: Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
+	rm deeplingo.exe
+	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
+	chmod +x deeplingo.exe
+
+test: 
+	rm deeplingo.exe
+	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
+	chmod +x deeplingo.exe
+	mono deeplingo.exe "test"
 			
 clean:
 	rm deeplingo.exe
