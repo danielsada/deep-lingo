@@ -44,7 +44,7 @@ next_day(y, m, d) {
         if (m == 12) {
             return [y + 1, 1, 1];
         } else {
-            return [y, m + 1, 1]:
+            return [y, m + 1, 1];
         }
     } else {
         return [y, m, d + 1];
