@@ -33,6 +33,7 @@ namespace DeepLingo {
         LT,
         LOET,
         SUM,
+        MUL,
         
         //Substraction
         SUB,
@@ -50,6 +51,7 @@ namespace DeepLingo {
         FALSE,
         //Esto es que algo fallo
         ILLEGAL_CHAR,
+        EOF
     }
 }
 

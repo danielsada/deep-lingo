@@ -37,8 +37,8 @@ namespace DeepLingo {
               | (?<False>      ^(?!42$)\d+      )
               | (?<Identifier> [a-zA-Z]+ )
               | (?<IntLiteral> \d+       )
-              | (?<CharLiteral> (['][^\\'"]?['])|(['][\\](n|r|t|\\|'|"|u[0-9A-Fa-f]{6})['])       ) 
-              | (?<StringLiteral> (["][^\\'"]*["])|(["]([^\\'"]*([\\](n|r|t|\\|'|"|u[0-9A-Fa-f]{6}))*[^\\'"]*)["])       )
+              | (?<CharLiteral> (['][^\\'""]?['])|(['][\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6})['])       ) 
+              | (?<StringLiteral> ([""][^\\'""]*[""])|([""]([^\\'""]*([\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6}))*[^\\'""]*)[""])       )
               | (?<Array> [[][]]       ) # falta este
               | (?<Less>       [<]       )
               | (?<LessOrEqual>       [<][=]       )
@@ -97,7 +97,7 @@ namespace DeepLingo {
                 {"Div", TokenType.DIV},
                 {"ParLeft", TokenType.PARENTHESIS_OPEN},
                 {"ParRight", TokenType.PARENTHESIS_CLOSE},
-                {"Plus", TokenType.PLUS},
+                {"Plus", TokenType.SUM},
                 {"True", TokenType.TRUE},
                 {"False", TokenType.FALSE}                
             };
