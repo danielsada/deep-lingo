@@ -30,30 +30,38 @@ namespace DeepLingo {
 
         static readonly Regex regex = new Regex(
             @"
-                (?<Comment>    (\/\/)(.*)|(\/\*)((.|\n)*)(\*\/))                             
-              | (?<And>        [&]       )
-              | (?<Or>     [|]       )  
-              | (?<Assign>     [=]       )
-              | (?<False>      ^(?!42$)\d+      )
-              | (?<Identifier> [a-zA-Z]+ )
-              | (?<IntLiteral> \d+       )
-              | (?<Less>       [<]       )
-              | (?<LessOrEqual>       [<][=]       )
-              | (?<Greater>       [>]       )
-              | (?<GreaterOrEqual>       [>][=]       )
-              | (?<Equals>       [=]{2}       )
-              | (?<NotEquals>       [!][=]       )
-              | (?<Mul>        [*]       )
-              | (?<Neg>        [-]       )
-              | (?<Mod>        [%]       )
-              | (?<Div>        [/]       )
-              | (?<Newline>    \n        )
-              | (?<ParLeft>    [(]       )
-              | (?<ParRight>   [)]       )
-              | (?<Plus>       [+]       )              
-              | (?<True>       [4][2]      )
-              | (?<WhiteSpace> \s        )     
-              | (?<Other>      .         )  
+                (?<Comment>           (\/\/)(.*)|(\/\*)((.|\n)*)(\*\/))                             
+              | (?<And>               [&]                    )
+              | (?<Or>                [|]                    )  
+              | (?<Assign>            [=]                    )
+              | (?<False>             ^(?!42$)\d+            )
+              | (?<Identifier>        [a-zA-Z_]+             )
+              | (?<IntLiteral>        \d+                    )
+              | (?<CharLiteral>        (['][^\\'""]?['])|(['][\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6})['])       ) 
+              | (?<StringLiteral>        ([""][^\\'""]*[""])|([""]([^\\'""]*([\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6}))*[^\\'""]*)[""])       )
+              | (?<Less>              [<]                    )
+              | (?<LessOrEqual>       [<][=]                 )
+              | (?<Greater>           [>]                    )
+              | (?<GreaterOrEqual>    [>][=]                 )
+              | (?<Equals>            [=]{2}                 )
+              | (?<NotEquals>         [!][=]                 )
+              | (?<Mul>               [*]                    )
+              | (?<Neg>               [-]                    )
+              | (?<Mod>               [%]                    )
+              | (?<Div>               [/]                    )
+              | (?<Newline>           \n                     )
+              | (?<ParLeft>           [(]                    )
+              | (?<ParRight>          [)]                    )
+              | (?<BlockBegin>        [{]                    )
+              | (?<BlockEnd>          [}]                    )
+              | (?<InstrEnd>          [;]                    )
+              | (?<ArrBegin>          [\[]                   )
+              | (?<ArrEnd>            [\]]                   )
+              | (?<ListSeparator>     [,]                    )
+              | (?<Plus>              [+]                    )              
+              | (?<True>              [4][2]                 )
+              | (?<WhiteSpace>        \s                     )     
+              | (?<Other>             .                      )  
             ", 
             RegexOptions.IgnorePatternWhitespace 
                 | RegexOptions.Compiled
@@ -93,6 +101,12 @@ namespace DeepLingo {
                 {"Div", TokenType.DIV},
                 {"ParLeft", TokenType.PARENTHESIS_OPEN},
                 {"ParRight", TokenType.PARENTHESIS_CLOSE},
+                {"BlockBegin", TokenType.BLOCK_BEGIN},
+                {"BlockEnd", TokenType.BLOCK_END},
+                {"ArrBegin", TokenType.ARR_BEGIN},
+                {"ArrEnd", TokenType.ARR_END},
+                {"ListSeparator", TokenType.LIST},
+                {"InstrEnd", TokenType.INSTRUCTION_END},
                 {"Plus", TokenType.SUM},
                 {"True", TokenType.TRUE}
             };

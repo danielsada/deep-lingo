@@ -11,9 +11,17 @@ namespace DeepLingo {
         IF,
         VAR,
 
-        //OPERATORS,
+        // Delimitors
         PARENTHESIS_OPEN,
         PARENTHESIS_CLOSE,
+        BLOCK_BEGIN,
+        BLOCK_END,
+        INSTRUCTION_END,
+        ARR_BEGIN,
+        ARR_END,
+
+
+        //OPERATORS,
         ASSIGN,
         INCR,
         DECR,
