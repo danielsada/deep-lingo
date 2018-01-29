@@ -28,6 +28,16 @@ test:
 	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
 	chmod +x deeplingo.exe
 	mono deeplingo.exe "test"
-			
+
+run-all:
+	mono deeplingo.exe ./example-programs/arrays.deep
+	mono deeplingo.exe ./example-programs/binary.deep
+	mono deeplingo.exe ./example-programs/literals.deep
+	mono deeplingo.exe ./example-programs/next_day.deep
+	mono deeplingo.exe ./example-programs/palindrome.deep
+	mono deeplingo.exe ./example-programs/ultimate.deep
+
+
+
 clean:
 	rm -f deeplingo.exe
