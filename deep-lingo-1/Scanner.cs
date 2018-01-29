@@ -29,17 +29,14 @@ namespace DeepLingo {
         readonly string input;
 
         static readonly Regex regex = new Regex(
-            @"                             
-                (?<And>        [&]       )
+            @"
+                (?<Comment>    (\/\/)(.*)|(\/\*)((.|\n)*)(\*\/))                             
+              | (?<And>        [&]       )
               | (?<Or>     [|]       )  
               | (?<Assign>     [=]       )
-              | (?<Comment>    ([/][*].*[*][/])|([/]{2}.*)       )
               | (?<False>      ^(?!42$)\d+      )
               | (?<Identifier> [a-zA-Z]+ )
               | (?<IntLiteral> \d+       )
-              | (?<CharLiteral> (['][^\\'""]?['])|(['][\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6})['])       ) 
-              | (?<StringLiteral> ([""][^\\'""]*[""])|([""]([^\\'""]*([\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6}))*[^\\'""]*)[""])       )
-              | (?<Array> [[][]]       ) # falta este
               | (?<Less>       [<]       )
               | (?<LessOrEqual>       [<][=]       )
               | (?<Greater>       [>]       )
@@ -55,8 +52,8 @@ namespace DeepLingo {
               | (?<ParRight>   [)]       )
               | (?<Plus>       [+]       )              
               | (?<True>       [4][2]      )
-              | (?<WhiteSpace> \s        )     # Must go anywhere after Newline.
-              | (?<Other>      .         )     # Must be last: match any other character.
+              | (?<WhiteSpace> \s        )     
+              | (?<Other>      .         )  
             ", 
             RegexOptions.IgnorePatternWhitespace 
                 | RegexOptions.Compiled
@@ -111,10 +108,14 @@ namespace DeepLingo {
 
             Func<Match, TokenType, Token> newTok = (m, tc) =>
                 new Token(m.Value, tc, row, m.Index - columnStart + 1);
-
+            
             foreach (Match m in regex.Matches(input)) {
+                if (m.Groups["WhiteSpace"].Success 
+                    || m.Groups["Comment"].Success) {
+                    
+                    // Skip white space and comments.
 
-                if (m.Groups["Newline"].Success) {
+                } else if (m.Groups["Newline"].Success) {
 
                     // Found a new line.
                     row++;
@@ -122,7 +123,7 @@ namespace DeepLingo {
 
                 } else if (m.Groups["WhiteSpace"].Success 
                     || m.Groups["Comment"].Success) {
-
+                    
                     // Skip white space and comments.
 
                 } else if (m.Groups["Identifier"].Success) {
