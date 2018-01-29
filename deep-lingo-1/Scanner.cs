@@ -31,19 +31,27 @@ namespace DeepLingo {
         static readonly Regex regex = new Regex(
             @"                             
                 (?<And>        [&]       )
+              | (?<Or>     [|]       )  
               | (?<Assign>     [=]       )
-              | (?<Comment>    ;.*       )
-              | (?<False>      [#]f      )
+              | (?<Comment>    ([/][*].*[*][/])|([/]{2}.*)       )
+              | (?<False>      ^(?!42$)\d+      )
               | (?<Identifier> [a-zA-Z]+ )
               | (?<IntLiteral> \d+       )
+              | (?<CharLiteral> \d+       )  #falta este
+              | (?<StringLiteral> \d+       ) # falta este
               | (?<Less>       [<]       )
+              | (?<LessOrEqual>       [<][=]       )
+              | (?<Greater>       [>]       )
+              | (?<GreaterOrEqual>       [>][=]       )
               | (?<Mul>        [*]       )
               | (?<Neg>        [-]       )
+              | (?<Mod>        [%]       )
+              | (?<Div>        [/]       )
               | (?<Newline>    \n        )
               | (?<ParLeft>    [(]       )
               | (?<ParRight>   [)]       )
               | (?<Plus>       [+]       )              
-              | (?<True>       [#]t      )
+              | (?<True>       [4][2]      )
               | (?<WhiteSpace> \s        )     # Must go anywhere after Newline.
               | (?<Other>      .         )     # Must be last: match any other character.
             ", 
@@ -51,30 +59,40 @@ namespace DeepLingo {
                 | RegexOptions.Compiled
                 | RegexOptions.Multiline
             );
-
+        //Keywords Finished
         static readonly IDictionary<string, TokenType> keywords =
             new Dictionary<string, TokenType>() {
-                {"bool", TokenType.BOOL},
-                {"end", TokenType.END},
-                {"if", TokenType.IF},
-                {"int", TokenType.INT},
-                {"print", TokenType.PRINT},
-                {"then", TokenType.THEN}
+                {"break", TokenType.BREAK},
+                {"loop", TokenType.LOOP},
+                {"else", TokenType.ELSE},
+                {"return", TokenType.RETURN},
+                {"elseif", TokenType.ELSEIF},
+                {"var", TokenType.VAR},
+                {"if", TokenType.IF}
             };
 
         static readonly IDictionary<string, TokenType> nonKeywords =
             new Dictionary<string, TokenType>() {
                 {"And", TokenType.AND},
+                {"Or", TokenType.OR},
                 {"Assign", TokenType.ASSIGN},
                 {"False", TokenType.FALSE},
-                {"IntLiteral", TokenType.INT_LITERAL},
-                {"Less", TokenType.LESS},
+                {"IntLiteral", TokenType.VAR_INT},
+                {"CharLiteral", TokenType.VAR_CHAR},
+                {"StringLiteral", TokenType.VAR_STRING},
+                {"Less", TokenType.LT},
+                {"LessOrEqual", TokenType.LOET},
+                {"Greater", TokenType.GT},
+                {"GreaterOrEqual", TokenType.GOET},
                 {"Mul", TokenType.MUL},
-                {"Neg", TokenType.NEG},
+                {"Neg", TokenType.SUB},
+                {"Mod", TokenType.MOD},
+                {"Div", TokenType.DIV},
                 {"ParLeft", TokenType.PARENTHESIS_OPEN},
                 {"ParRight", TokenType.PARENTHESIS_CLOSE},
                 {"Plus", TokenType.PLUS},
-                {"True", TokenType.TRUE}                
+                {"True", TokenType.TRUE},
+                {"False", TokenType.FALSE}                
             };
 
         public Scanner(string input) {

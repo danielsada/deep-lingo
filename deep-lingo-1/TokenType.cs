@@ -9,6 +9,7 @@ namespace DeepLingo {
         RETURN,
         ELSEIF,
         IF,
+        VAR,
 
         //OPERATORS,
         PARENTHESIS_OPEN,
@@ -46,6 +47,7 @@ namespace DeepLingo {
         VAR_STRING,
         // En este lenguaje, 42 es TRUE.
         TRUE,
+        FALSE,
         //Esto es que algo fallo
         ILLEGAL_CHAR,
     }
