@@ -16,6 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+.PHONY: deeplingo.exe test clean
+
 deeplingo.exe: Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
 	rm deeplingo.exe
 	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
