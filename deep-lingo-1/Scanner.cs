@@ -38,7 +38,7 @@ namespace DeepLingo {
               | (?<Identifier>        [a-zA-Z_]+             )
               | (?<IntLiteral>        \d+                    )
               | (?<CharLiteral>        (['][^\\'""]?['])|(['][\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6})['])       ) 
-              | (?<StringLiteral>        ([""][^\\'""]*[""])|([""]([^\\'""]*([\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6}))*[^\\'""]*)[""])       )
+              | (?<StringLiteral>       ([""][^\'""]*[""])|([""]([^\'""]*([\](n|r|t|[\]|'|""|u[0-9A-Fa-f]{6})*[^\'""]*)[""])       )
               | (?<Less>              [<]                    )
               | (?<LessOrEqual>       [<][=]                 )
               | (?<Greater>           [>]                    )
@@ -46,7 +46,8 @@ namespace DeepLingo {
               | (?<Equals>            [=]{2}                 )
               | (?<NotEquals>         [!][=]                 )
               | (?<Mul>               [*]                    )
-              | (?<Neg>               [-]                    )
+              | (?<Sub>               [-]                    )
+              | (?<Neg>               [!]                    )
               | (?<Mod>               [%]                    )
               | (?<Div>               [/]                    )
               | (?<Newline>           \n                     )
@@ -99,6 +100,7 @@ namespace DeepLingo {
                 {"Neg", TokenType.NOT},
                 {"Mod", TokenType.MOD},
                 {"Div", TokenType.DIV},
+                {"Sub", TokenType.SUB},
                 {"ParLeft", TokenType.PARENTHESIS_OPEN},
                 {"ParRight", TokenType.PARENTHESIS_CLOSE},
                 {"BlockBegin", TokenType.BLOCK_BEGIN},
