@@ -37,12 +37,15 @@ namespace DeepLingo {
               | (?<False>      ^(?!42$)\d+      )
               | (?<Identifier> [a-zA-Z]+ )
               | (?<IntLiteral> \d+       )
-              | (?<CharLiteral> \d+       )  #falta este
-              | (?<StringLiteral> \d+       ) # falta este
+              | (?<CharLiteral> (['][^\\'"]?['])|(['][\\](n|r|t|\\|'|"|u[0-9A-Fa-f]{6})['])       ) 
+              | (?<StringLiteral> (["][^\\'"]*["])|(["]([^\\'"]*([\\](n|r|t|\\|'|"|u[0-9A-Fa-f]{6}))*[^\\'"]*)["])       )
+              | (?<Array> [[][]]       ) # falta este
               | (?<Less>       [<]       )
               | (?<LessOrEqual>       [<][=]       )
               | (?<Greater>       [>]       )
               | (?<GreaterOrEqual>       [>][=]       )
+              | (?<Equals>       [=]{2}       )
+              | (?<NotEquals>       [!][=]       )
               | (?<Mul>        [*]       )
               | (?<Neg>        [-]       )
               | (?<Mod>        [%]       )
@@ -80,12 +83,16 @@ namespace DeepLingo {
                 {"IntLiteral", TokenType.VAR_INT},
                 {"CharLiteral", TokenType.VAR_CHAR},
                 {"StringLiteral", TokenType.VAR_STRING},
+                {"Array", TokenType.ARRAY},
                 {"Less", TokenType.LT},
                 {"LessOrEqual", TokenType.LOET},
                 {"Greater", TokenType.GT},
                 {"GreaterOrEqual", TokenType.GOET},
+                {"Equals", TokenType.EQUALS},
+                {"NotEquals", TokenType.NOT_EQUALS},
+                {"GreaterOrEqual", TokenType.GOET},
                 {"Mul", TokenType.MUL},
-                {"Neg", TokenType.SUB},
+                {"Neg", TokenType.NOT},
                 {"Mod", TokenType.MOD},
                 {"Div", TokenType.DIV},
                 {"ParLeft", TokenType.PARENTHESIS_OPEN},
