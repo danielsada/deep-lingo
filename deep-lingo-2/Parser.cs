@@ -26,33 +26,32 @@ namespace DeepLingo {
 
         static readonly ISet<TokenType> firstOfDeclaration =
             new HashSet<TokenType> () {
-                TokenType.INT,
-                TokenType.BOOL
+                TokenType.VAR_CHAR,
+                TokenType.VAR_STRING
             };
 
         static readonly ISet<TokenType> firstOfStatement =
             new HashSet<TokenType> () {
                 TokenType.IDENTIFIER,
-                TokenType.PRINT,
+                TokenType.LOOP,
                 TokenType.IF
             };
 
         static readonly ISet<TokenType> firstOfOperator =
             new HashSet<TokenType> () {
-                TokenType.AND,
-                TokenType.LESS,
-                TokenType.PLUS,
-                TokenType.MUL
+                TokenType.SUM,
+                TokenType.MUL,
+                TokenType.SUB,
+                TokenType.DIV
             };
 
         static readonly ISet<TokenType> firstOfSimpleExpression =
             new HashSet<TokenType> () {
                 TokenType.IDENTIFIER,
-                TokenType.INT_LITERAL,
+                TokenType.VAR_INT,
                 TokenType.TRUE,
                 TokenType.FALSE,
-                TokenType.PARENTHESIS_OPEN,
-                TokenType.NEG
+                TokenType.PARENTHESIS_OPEN
             };
 
         IEnumerator<Token> tokenStream;
@@ -62,11 +61,11 @@ namespace DeepLingo {
             this.tokenStream.MoveNext ();
         }
 
-        public TokenCategory CurrentToken {
+        public TokenType CurrentToken {
             get { return tokenStream.Current.Category; }
         }
 
-        public Token Expect (TokenCategory category) {
+        public Token Expect (TokenType category) {
             if (CurrentToken == category) {
                 Token current = tokenStream.Current;
                 tokenStream.MoveNext ();
@@ -86,27 +85,27 @@ namespace DeepLingo {
                 Statement ();
             }
 
-            Expect (TokenCategory.EOF);
+            Expect (TokenType.EOF);
         }
 
         public void Declaration () {
             Type ();
-            Expect (TokenCategory.IDENTIFIER);
+            Expect (TokenType.IDENTIFIER);
         }
 
         public void Statement () {
 
             switch (CurrentToken) {
 
-                case TokenCategory.IDENTIFIER:
+                case TokenType.IDENTIFIER:
                     Assignment ();
                     break;
 
-                case TokenCategory.PRINT:
+                case TokenType.PRINT:
                     Print ();
                     break;
 
-                case TokenCategory.IF:
+                case TokenType.IF:
                     If ();
                     break;
 
@@ -119,12 +118,12 @@ namespace DeepLingo {
         public void Type () {
             switch (CurrentToken) {
 
-                case TokenCategory.INT:
-                    Expect (TokenCategory.INT);
+                case TokenType.INT:
+                    Expect (TokenType.INT);
                     break;
 
-                case TokenCategory.BOOL:
-                    Expect (TokenCategory.BOOL);
+                case TokenType.BOOL:
+                    Expect (TokenType.BOOL);
                     break;
 
                 default:
@@ -134,24 +133,24 @@ namespace DeepLingo {
         }
 
         public void Assignment () {
-            Expect (TokenCategory.IDENTIFIER);
-            Expect (TokenCategory.ASSIGN);
+            Expect (TokenType.IDENTIFIER);
+            Expect (TokenType.ASSIGN);
             Expression ();
         }
 
         public void Print () {
-            Expect (TokenCategory.PRINT);
+            Expect (TokenType.PRINT);
             Expression ();
         }
 
         public void If () {
-            Expect (TokenCategory.IF);
+            Expect (TokenType.IF);
             Expression ();
-            Expect (TokenCategory.THEN);
+            Expect (TokenType.THEN);
             while (firstOfStatement.Contains (CurrentToken)) {
                 Statement ();
             }
-            Expect (TokenCategory.END);
+            Expect (TokenType.END);
         }
 
         public void Expression () {
@@ -166,30 +165,30 @@ namespace DeepLingo {
 
             switch (CurrentToken) {
 
-                case TokenCategory.IDENTIFIER:
-                    Expect (TokenCategory.IDENTIFIER);
+                case TokenType.IDENTIFIER:
+                    Expect (TokenType.IDENTIFIER);
                     break;
 
-                case TokenCategory.INT_LITERAL:
-                    Expect (TokenCategory.INT_LITERAL);
+                case TokenType.INT_LITERAL:
+                    Expect (TokenType.INT_LITERAL);
                     break;
 
-                case TokenCategory.TRUE:
-                    Expect (TokenCategory.TRUE);
+                case TokenType.TRUE:
+                    Expect (TokenType.TRUE);
                     break;
 
-                case TokenCategory.FALSE:
-                    Expect (TokenCategory.FALSE);
+                case TokenType.FALSE:
+                    Expect (TokenType.FALSE);
                     break;
 
-                case TokenCategory.PARENTHESIS_OPEN:
-                    Expect (TokenCategory.PARENTHESIS_OPEN);
+                case TokenType.PARENTHESIS_OPEN:
+                    Expect (TokenType.PARENTHESIS_OPEN);
                     Expression ();
-                    Expect (TokenCategory.PARENTHESIS_CLOSE);
+                    Expect (TokenType.PARENTHESIS_CLOSE);
                     break;
 
-                case TokenCategory.NEG:
-                    Expect (TokenCategory.NEG);
+                case TokenType.NEG:
+                    Expect (TokenType.NEG);
                     SimpleExpression ();
                     break;
 
@@ -203,26 +202,32 @@ namespace DeepLingo {
 
             switch (CurrentToken) {
 
-                case TokenCategory.AND:
-                    Expect (TokenCategory.AND);
+                case TokenType.AND:
+                    Expect (TokenType.AND);
                     break;
 
-                case TokenCategory.LESS:
-                    Expect (TokenCategory.LESS);
+                case TokenType.LESS:
+                    Expect (TokenType.LESS);
                     break;
 
-                case TokenCategory.PLUS:
-                    Expect (TokenCategory.PLUS);
+                case TokenType.PLUS:
+                    Expect (TokenType.PLUS);
                     break;
 
-                case TokenCategory.MUL:
-                    Expect (TokenCategory.MUL);
+                case TokenType.MUL:
+                    Expect (TokenType.MUL);
                     break;
 
                 default:
                     throw new SyntaxError (firstOfOperator,
                         tokenStream.Current);
             }
+        }
+    }
+
+    class SyntaxError : System.Exception{
+        public SyntaxError(dynamic category, Token tok){
+            
         }
     }
 }
