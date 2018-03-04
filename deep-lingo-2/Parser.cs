@@ -24,6 +24,12 @@ namespace DeepLingo {
 
     class Parser {
 
+        static readonly ISet<TokenType> firstOfDef =
+            new HashSet<TokenType> () {
+                TokenType.VAR,
+                TokenType.IDENTIFIER
+            };
+
         static readonly ISet<TokenType> firstOfDeclaration =
             new HashSet<TokenType> () {
                 TokenType.VAR_CHAR,
@@ -77,15 +83,44 @@ namespace DeepLingo {
 
         public void Program () {
 
-            while (firstOfDeclaration.Contains (CurrentToken)) {
-                Declaration ();
+            while (CurrentToken == TokenType.VAR) {
+                VarDef ();
             }
 
-            while (firstOfStatement.Contains (CurrentToken)) {
-                Statement ();
+            while (CurrentToken == TokenType.IDENTIFIER) {
+                FunDef ();
             }
 
             Expect (TokenType.EOF);
+        }
+
+        public void VarDef(){
+            Expect(TokenType.VAR);
+            IdList();
+            Expect(TokenType.INSTRUCTION_END);
+        }
+
+        public void FunDef(){
+            Expect(TokenType.IDENTIFIER);
+            Expect(TokenType.PARENTHESIS_OPEN);
+            if(CurrentToken != TokenType.PARENTHESIS_CLOSE){
+                IdList();
+            }
+            Expect(TokenType.PARENTHESIS_CLOSE);
+            Expect(TokenType.BLOCK_BEGIN);
+            while(CurrentToken == TokenType.VAR){
+                VarDef();
+            }
+
+
+
+        }
+
+        public void IdList(){
+            Expect(TokenType.IDENTIFIER);
+            while(CurrentToken == TokenType.LIST){
+                Expect(TokenType.IDENTIFIER);
+            }
         }
 
         public void Declaration () {
@@ -169,7 +204,7 @@ namespace DeepLingo {
                     Expect (TokenType.IDENTIFIER);
                     break;
 
-                case TokenType.INT_LITERAL:
+                case TokenType.VAR_INT:
                     Expect (TokenType.INT_LITERAL);
                     break;
 
@@ -225,9 +260,9 @@ namespace DeepLingo {
         }
     }
 
-    class SyntaxError : System.Exception{
-        public SyntaxError(dynamic category, Token tok){
-            
+    class SyntaxError : System.Exception {
+        public SyntaxError (dynamic category, Token tok) {
+
         }
     }
 }
