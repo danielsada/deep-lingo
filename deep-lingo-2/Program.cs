@@ -20,27 +20,21 @@ namespace DeepLingo {
             }
 
             if (args[0] == "test") {
-                ScannerTest tests = new ScannerTest();
+                ScannerTest tests = new ScannerTest ();
                 tests.RunTests ();
             } else {
-               try {            
-                var inputPath = args[0];                
-                var input = File.ReadAllText(inputPath);
-                
-                Console.WriteLine(String.Format(
-                    "===== Tokens from: \"{0}\" =====", inputPath)
-                );
-                var count = 1;
-                foreach (var tok in new Scanner(input).Start()) {
-                    Console.WriteLine(String.Format("[{0}] {1}", 
-                                                    count++, tok)
-                    );
+                try {
+                    var inputPath = args[0];
+                    String input = File.ReadAllText (inputPath);
+
+                    Console.WriteLine (String.Format (
+                        "===== Tokens from: \"{0}\" =====", inputPath));
+                    int count = 1;
+                    Parser parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
+                } catch (FileNotFoundException e) {
+                    Console.Error.WriteLine (e.Message);
+                    Environment.Exit (1);
                 }
-                
-            } catch (FileNotFoundException e) {
-                Console.Error.WriteLine(e.Message);
-                Environment.Exit(1);
-            }  
             }
         }
 
