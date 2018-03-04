@@ -35,6 +35,7 @@ namespace DeepLingo {
               | (?<Or>                [|]                    )  
               | (?<Assign>            [=]                    )
               | (?<False>             ^(?!42$)\d+            )
+              | (?<Var>               [v][a][r]                        )
               | (?<Identifier>        [a-zA-Z_]+             )
               | (?<IntLiteral>        \d+                    )
               | (?<CharLiteral>       (['][^\\'""]?['])|(['][\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6})['])       ) 
@@ -86,6 +87,7 @@ namespace DeepLingo {
                 {"Or", TokenType.OR},
                 {"Assign", TokenType.ASSIGN},
                 {"False", TokenType.FALSE},
+                {"Var", TokenType.VAR},
                 {"IntLiteral", TokenType.VAR_INT},
                 {"CharLiteral", TokenType.VAR_CHAR},
                 {"StringLiteral", TokenType.VAR_STRING},
@@ -121,7 +123,7 @@ namespace DeepLingo {
 
             var row = 1;
             var columnStart = 0;
-
+            Console.WriteLine(regex.Matches(input));
             Func<Match, TokenType, Token> newTok = (m, tc) =>
                 new Token(m.Value, tc, row, m.Index - columnStart + 1);
             

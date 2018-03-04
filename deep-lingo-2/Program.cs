@@ -30,7 +30,14 @@ namespace DeepLingo {
                     Console.WriteLine (String.Format (
                         "===== Tokens from: \"{0}\" =====", inputPath));
                     int count = 1;
-                    Parser parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
+
+                    foreach (var tok in new Scanner (input).Start ()) {
+                        Console.WriteLine (String.Format ("[{0}] {1}",
+                            count++, tok));
+                    }
+                    var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
+                    parser.Program ();
+                    // Parser parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
                 } catch (FileNotFoundException e) {
                     Console.Error.WriteLine (e.Message);
                     Environment.Exit (1);
