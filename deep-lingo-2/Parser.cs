@@ -261,9 +261,7 @@ namespace DeepLingo {
 
         }
 
-        public void ExpressionUnary () {
-
-        }
+        public void ExpressionUnary () { }
 
         public void Operator () {
             ExpectSet (firstOfOperator);
@@ -372,3 +370,4 @@ namespace DeepLingo {
             }
         }
     }
+}
