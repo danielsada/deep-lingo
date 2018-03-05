@@ -251,7 +251,7 @@ namespace DeepLingo {
         }
 
         public void Assignment () {
-            Expect (TokenType.IDENTIFIER);
+            //Expect (TokenType.IDENTIFIER);
             Expect (TokenType.ASSIGN);
             Expression ();
         }
