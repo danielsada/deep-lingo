@@ -53,7 +53,28 @@ namespace DeepLingo {
                 TokenType.GT,
                 TokenType.GOET
             };
-
+        static readonly ISet<TokenType> firstOfOperatorBool =
+            new HashSet<TokenType> () {
+                TokenType.OR,
+                TokenType.AND
+            };
+        static readonly ISet<TokenType> firstOfOperatorComp =
+            new HashSet<TokenType> () {
+                TokenType.LT,
+                TokenType.LOET,
+                TokenType.GT,
+                TokenType.GOET
+                TokenType.EQUALS,
+                TokenType.NOT_EQUALS
+            };
+        static readonly ISet<TokenType> firstOfOperatorMath =
+            new HashSet<TokenType> () {
+                TokenType.SUM,
+                TokenType.MUL,
+                TokenType.SUB,
+                TokenType.DIV,
+                TokenType.MOD
+            };
         static readonly ISet<TokenType> firstOfSimpleExpression =
             new HashSet<TokenType> () {
                 TokenType.IDENTIFIER,
@@ -329,10 +350,80 @@ namespace DeepLingo {
         }
 
         public void Operator () {
-            ExpectSet (firstOfOperator);
+            if (firstOfOperatorBool.Contains(CurrentToken)){
+                OperatorBool();
+            }else if(firstOfOperatorComp.Contains(CurrentToken)){
+                OperatorComp();
+            }else if(firstOfOperatorMath.Contains(CurrentToken)){
+                OperatorMath();
+            }
+
         }
         public void OperatorBool(){
-
+            while (firstOfOperatorBool.Contains(CurrentToken)){
+                switch (CurrentToken){
+                    case TokenType.OR:
+                        Expect(TokenType.OR);
+                    break;
+                    case TokenType.AND:
+                        Expect(TokenType.AND);
+                    break;
+                    default:
+                    break;
+                }
+                Expression();
+            }
+        }
+        public void OperatorComp(){
+             while (firstOfOperatorComp.Contains(CurrentToken)){
+                switch (CurrentToken){
+                    case TokenType.GT:
+                        Expect(TokenType.GT);
+                    break;
+                    case TokenType.GOET:
+                        Expect(TokenType.GOET);
+                    break;
+                    case TokenType.LT:
+                        Expect(TokenType.LT);
+                    break;
+                    case TokenType.LOET:
+                        Expect(TokenType.LOET);
+                    break;
+                    case TokenType.EQUALS:
+                        Expect(TokenType.EQUALS);
+                    break;
+                    case TokenType.NOT_EQUALS:
+                        Expect(TokenType.NOT_EQUALS);
+                    break;
+                    default:
+                    break;
+                }
+                Expression();
+            }
+        }
+        public void OperatorMath(){
+            while (firstOfOperatorMath.Contains(CurrentToken)){
+                switch (CurrentToken){
+                    case TokenType.SUM:
+                        Expect(TokenType.SUM);
+                    break;
+                    case TokenType.SUB:
+                        Expect(TokenType.SUB);
+                    break;
+                    case TokenType.DIV:
+                        Expect(TokenType.DIV);
+                    break;
+                    case TokenType.MUL:
+                        Expect(TokenType.MUL);
+                    break;
+                    case TokenType.MOD:
+                        Expect(TokenType.MOD);
+                    break;
+                    default:
+                    break;
+                }
+                Expression();
+            }
         }
 
         // A PARTIR DE AQUI ES CODIGO EJEMPLO
