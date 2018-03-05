@@ -156,6 +156,7 @@ namespace DeepLingo {
         public void IdList () {
             Expect (TokenType.IDENTIFIER);
             while (CurrentToken == TokenType.LIST) {
+                Expect(TokenType.LIST);
                 Expect (TokenType.IDENTIFIER);
             }
         }
