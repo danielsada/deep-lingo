@@ -282,12 +282,35 @@ namespace DeepLingo {
 
                 }
             }
+            switch (CurrentToken){
+                case TokenType.IDENTIFIER:
+                    Expect(TokenType.IDENTIFIER);
+                break;
+                case TokenType.PARENTHESIS_OPEN:
+                    FunCall();
+                break;
+                case TokenType.ARR_BEGIN:
+                    Array();
+                break;
+                case TokenType.VAR_CHAR:
+                case TokenType.VAR_INT:
+                case TokenType.VAR_STRING:
+                    Literal();
+                break;
+                default:
+                break;
+            }
         }
         public void Array(){
             Expect(TokenType.ARR_BEGIN);
-            while (firstOfSimpleExpression.Contains(CurrentToken)){
-                Expression();
+            if(TokenType.ARR_END != CurrentToken){
+                Expression()
+                while (TokenType.LIST){
+                    Expect(TokenType.LIST);
+                    Expression();
+                }
             }
+            
             Expect(TokenType.ARR_END);
         }
         public void Literal(){
@@ -307,6 +330,9 @@ namespace DeepLingo {
 
         public void Operator () {
             ExpectSet (firstOfOperator);
+        }
+        public void OperatorBool(){
+
         }
 
         // A PARTIR DE AQUI ES CODIGO EJEMPLO
