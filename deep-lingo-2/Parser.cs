@@ -40,7 +40,9 @@ namespace DeepLingo {
             new HashSet<TokenType> () {
                 TokenType.IDENTIFIER,
                 TokenType.LOOP,
-                TokenType.IF
+                TokenType.IF,
+                TokenType.BREAK,
+                TokenType.RETURN
             };
 
         static readonly ISet<TokenType> firstOfOperator =
@@ -59,6 +61,13 @@ namespace DeepLingo {
                 TokenType.FALSE,
                 TokenType.PARENTHESIS_OPEN
             };
+        static readonly ISet<TokenCategory> firstOfExprRel = new HashSet<TokenCategory>(){
+            
+            TokenCategory.LT,
+            TokenCategory.LOET,
+            TokenCategory.GT,
+            TokenCategory.GOET
+        };
 
         IEnumerator<Token> tokenStream;
 
