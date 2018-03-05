@@ -212,10 +212,11 @@ namespace DeepLingo {
 
         public void Loop () {
             Expect (TokenType.LOOP);
-            Expect (TokenType.PARENTHESIS_OPEN);
+            Expect (TokenType.BLOCK_BEGIN);
             while (firstOfStatement.Contains (CurrentToken)) {
                 Stmt ();
             }
+            Expect(TokenType.BLOCK_END);
         }
 
         public void Break () {
@@ -261,7 +262,48 @@ namespace DeepLingo {
 
         }
 
-        public void ExpressionUnary () { }
+        public void ExpressionUnary () {
+            if(FirstOfExprUnary.Contains(CurrentToken) ){
+                switch (CurrentToken){
+                    case TokenType.SUM:
+                        Expect(TokenType.SUM);
+                    break;
+                    case TokenType.TokenType.NEG:
+                        Expect(TokenType.NEG);
+                    break;
+                    case TokenType.SUB:
+                        Expect(TokenType.SUB);
+                    break;
+                    case TokenType.SUM:
+                        Expect(TokenType.SUM);
+                    break;
+                    default:
+                    break;
+
+                }
+            }
+        }
+        public void Array(){
+            Expect(TokenType.ARR_BEGIN);
+            while (firstOfSimpleExpression.Contains(CurrentToken)){
+                Expression();
+            }
+            Expect(TokenType.ARR_END);
+        }
+        public void Literal(){
+            switch (CurrentToken){
+                case TokenType.VAR_INT:
+                    Expect(TokenType.VAR_INT);
+                break;
+                case TokenType.VAR_CHAR:
+                    Expect(TokenType.VAR_CHAR);
+                break;
+                case TokenType.VAR_STRING:
+                    Expect(TokenType.VAR_STRING);
+                break;
+                default:
+            }
+        }
 
         public void Operator () {
             ExpectSet (firstOfOperator);
@@ -369,5 +411,6 @@ namespace DeepLingo {
 
             }
         }
+            }
     }
 }
