@@ -95,13 +95,17 @@ namespace DeepLingo {
         }
 
         public Token Expect (TokenType category) {
+
             if (CurrentToken == category) {
+                Console.WriteLine ($"Success: Expected {category.ToString()}, got {CurrentToken}");
                 Token current = tokenStream.Current;
                 tokenStream.MoveNext ();
                 return current;
             } else {
+                Console.WriteLine ($"Failure: Expected {category.ToString()}, got {CurrentToken}");
                 throw new SyntaxError (category, tokenStream.Current);
             }
+
         }
         public Token ExpectSet (ISet<TokenType> category) {
             if (category.Contains (CurrentToken)) {
@@ -237,7 +241,7 @@ namespace DeepLingo {
             while (firstOfStatement.Contains (CurrentToken)) {
                 Stmt ();
             }
-            Expect(TokenType.BLOCK_END);
+            Expect (TokenType.BLOCK_END);
         }
 
         public void Break () {
@@ -284,143 +288,143 @@ namespace DeepLingo {
         }
 
         public void ExpressionUnary () {
-            if(FirstOfExprUnary.Contains(CurrentToken) ){
-                switch (CurrentToken){
+            if (FirstOfExprUnary.Contains (CurrentToken)) {
+                switch (CurrentToken) {
                     case TokenType.SUM:
-                        Expect(TokenType.SUM);
-                    break;
+                        Expect (TokenType.SUM);
+                        break;
                     case TokenType.NOT:
-                        Expect(TokenType.NOT);
-                    break;
+                        Expect (TokenType.NOT);
+                        break;
                     case TokenType.SUB:
-                        Expect(TokenType.SUB);
-                    break;
+                        Expect (TokenType.SUB);
+                        break;
                     default:
-                    break;
+                        break;
 
                 }
             }
-            switch (CurrentToken){
+            switch (CurrentToken) {
                 case TokenType.IDENTIFIER:
-                    Expect(TokenType.IDENTIFIER);
-                break;
+                    Expect (TokenType.IDENTIFIER);
+                    break;
                 case TokenType.PARENTHESIS_OPEN:
-                    FunCall();
-                break;
+                    FunCall ();
+                    break;
                 case TokenType.ARR_BEGIN:
-                    Array();
-                break;
+                    Array ();
+                    break;
                 case TokenType.VAR_CHAR:
                 case TokenType.VAR_INT:
                 case TokenType.VAR_STRING:
-                    Literal();
-                break;
+                    Literal ();
+                    break;
                 default:
-                break;
+                    break;
             }
         }
-        public void Array(){
-            Expect(TokenType.ARR_BEGIN);
-            if(TokenType.ARR_END != CurrentToken){
-                Expression();
-                while (TokenType.LIST== CurrentToken){
-                    Expect(TokenType.LIST);
-                    Expression();
+        public void Array () {
+            Expect (TokenType.ARR_BEGIN);
+            if (TokenType.ARR_END != CurrentToken) {
+                Expression ();
+                while (TokenType.LIST == CurrentToken) {
+                    Expect (TokenType.LIST);
+                    Expression ();
                 }
             }
-            
-            Expect(TokenType.ARR_END);
+
+            Expect (TokenType.ARR_END);
         }
-        public void Literal(){
-            switch (CurrentToken){
+        public void Literal () {
+            switch (CurrentToken) {
                 case TokenType.VAR_INT:
-                    Expect(TokenType.VAR_INT);
-                break;
+                    Expect (TokenType.VAR_INT);
+                    break;
                 case TokenType.VAR_CHAR:
-                    Expect(TokenType.VAR_CHAR);
-                break;
+                    Expect (TokenType.VAR_CHAR);
+                    break;
                 case TokenType.VAR_STRING:
-                    Expect(TokenType.VAR_STRING);
-                break;
+                    Expect (TokenType.VAR_STRING);
+                    break;
                 default:
-                break;
+                    break;
             }
         }
 
         public void Operator () {
-            if (firstOfOperatorBool.Contains(CurrentToken)){
-                OperatorBool();
-            }else if(firstOfOperatorComp.Contains(CurrentToken)){
-                OperatorComp();
-            }else if(firstOfOperatorMath.Contains(CurrentToken)){
-                OperatorMath();
+            if (firstOfOperatorBool.Contains (CurrentToken)) {
+                OperatorBool ();
+            } else if (firstOfOperatorComp.Contains (CurrentToken)) {
+                OperatorComp ();
+            } else if (firstOfOperatorMath.Contains (CurrentToken)) {
+                OperatorMath ();
             }
 
         }
-        public void OperatorBool(){
-            while (firstOfOperatorBool.Contains(CurrentToken)){
-                switch (CurrentToken){
+        public void OperatorBool () {
+            while (firstOfOperatorBool.Contains (CurrentToken)) {
+                switch (CurrentToken) {
                     case TokenType.OR:
-                        Expect(TokenType.OR);
-                    break;
+                        Expect (TokenType.OR);
+                        break;
                     case TokenType.AND:
-                        Expect(TokenType.AND);
-                    break;
+                        Expect (TokenType.AND);
+                        break;
                     default:
-                    break;
+                        break;
                 }
-                Expression();
+                Expression ();
             }
         }
-        public void OperatorComp(){
-             while (firstOfOperatorComp.Contains(CurrentToken)){
-                switch (CurrentToken){
+        public void OperatorComp () {
+            while (firstOfOperatorComp.Contains (CurrentToken)) {
+                switch (CurrentToken) {
                     case TokenType.GT:
-                        Expect(TokenType.GT);
-                    break;
+                        Expect (TokenType.GT);
+                        break;
                     case TokenType.GOET:
-                        Expect(TokenType.GOET);
-                    break;
+                        Expect (TokenType.GOET);
+                        break;
                     case TokenType.LT:
-                        Expect(TokenType.LT);
-                    break;
+                        Expect (TokenType.LT);
+                        break;
                     case TokenType.LOET:
-                        Expect(TokenType.LOET);
-                    break;
+                        Expect (TokenType.LOET);
+                        break;
                     case TokenType.EQUALS:
-                        Expect(TokenType.EQUALS);
-                    break;
+                        Expect (TokenType.EQUALS);
+                        break;
                     case TokenType.NOT_EQUALS:
-                        Expect(TokenType.NOT_EQUALS);
-                    break;
+                        Expect (TokenType.NOT_EQUALS);
+                        break;
                     default:
-                    break;
+                        break;
                 }
-                Expression();
+                Expression ();
             }
         }
-        public void OperatorMath(){
-            while (firstOfOperatorMath.Contains(CurrentToken)){
-                switch (CurrentToken){
+        public void OperatorMath () {
+            while (firstOfOperatorMath.Contains (CurrentToken)) {
+                switch (CurrentToken) {
                     case TokenType.SUM:
-                        Expect(TokenType.SUM);
-                    break;
+                        Expect (TokenType.SUM);
+                        break;
                     case TokenType.SUB:
-                        Expect(TokenType.SUB);
-                    break;
+                        Expect (TokenType.SUB);
+                        break;
                     case TokenType.DIV:
-                        Expect(TokenType.DIV);
-                    break;
+                        Expect (TokenType.DIV);
+                        break;
                     case TokenType.MUL:
-                        Expect(TokenType.MUL);
-                    break;
+                        Expect (TokenType.MUL);
+                        break;
                     case TokenType.MOD:
-                        Expect(TokenType.MOD);
-                    break;
+                        Expect (TokenType.MOD);
+                        break;
                     default:
-                    break;
+                        break;
                 }
-                Expression();
+                Expression ();
             }
         }
 
@@ -526,6 +530,6 @@ namespace DeepLingo {
 
             }
         }
-            //}
+        //}
     }
 }

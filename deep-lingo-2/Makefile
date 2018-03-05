@@ -18,14 +18,14 @@
 
 .PHONY: deeplingo.exe test clean
 
-deeplingo.exe: Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
+deeplingo.exe: Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs Parser.cs
 	rm -f deeplingo.exe
-	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
+	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs Parser.cs
 	chmod +x deeplingo.exe
 
 test: 
 	rm -f deeplingo.exe
-	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
+	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs Parser.cs
 	chmod +x deeplingo.exe
 	mono deeplingo.exe "test"
 
