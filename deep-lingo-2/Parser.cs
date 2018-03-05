@@ -63,7 +63,7 @@ namespace DeepLingo {
                 TokenType.LT,
                 TokenType.LOET,
                 TokenType.GT,
-                TokenType.GOET
+                TokenType.GOET,
                 TokenType.EQUALS,
                 TokenType.NOT_EQUALS
             };
@@ -289,14 +289,11 @@ namespace DeepLingo {
                     case TokenType.SUM:
                         Expect(TokenType.SUM);
                     break;
-                    case TokenType.TokenType.NEG:
-                        Expect(TokenType.NEG);
+                    case TokenType.NOT:
+                        Expect(TokenType.NOT);
                     break;
                     case TokenType.SUB:
                         Expect(TokenType.SUB);
-                    break;
-                    case TokenType.SUM:
-                        Expect(TokenType.SUM);
                     break;
                     default:
                     break;
@@ -325,8 +322,8 @@ namespace DeepLingo {
         public void Array(){
             Expect(TokenType.ARR_BEGIN);
             if(TokenType.ARR_END != CurrentToken){
-                Expression()
-                while (TokenType.LIST){
+                Expression();
+                while (TokenType.LIST== CurrentToken){
                     Expect(TokenType.LIST);
                     Expression();
                 }
@@ -346,6 +343,7 @@ namespace DeepLingo {
                     Expect(TokenType.VAR_STRING);
                 break;
                 default:
+                break;
             }
         }
 
@@ -528,6 +526,6 @@ namespace DeepLingo {
 
             }
         }
-            }
+            //}
     }
 }
