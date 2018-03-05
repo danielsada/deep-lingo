@@ -123,6 +123,12 @@ namespace DeepLingo {
             }
         }
 
+
+
+        // A PARTIR DE AQUI ES CODIGO EJEMPLO
+        // DEL PROFE
+
+
         public void Declaration () {
             Type ();
             Expect (TokenType.IDENTIFIER);
