@@ -20,12 +20,12 @@
 
 deeplingo.exe: Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
 	rm -f deeplingo.exe
-	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
+	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs Parser.cs
 	chmod +x deeplingo.exe
 
 test: 
 	rm -f deeplingo.exe
-	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs
+	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs Parser.cs
 	chmod +x deeplingo.exe
 	mono deeplingo.exe "test"
 
