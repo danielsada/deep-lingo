@@ -24,33 +24,34 @@ namespace DeepLingo {
 
     class Parser {
 
-        static readonly ISet<TokenType> firstOfDef =
-            new HashSet<TokenType> () {
-                TokenType.VAR,
-                TokenType.IDENTIFIER
-            };
-
-        static readonly ISet<TokenType> firstOfDeclaration =
-            new HashSet<TokenType> () {
-                TokenType.VAR_CHAR,
-                TokenType.VAR_STRING
-            };
-
         static readonly ISet<TokenType> firstOfStatement =
             new HashSet<TokenType> () {
                 TokenType.IDENTIFIER,
                 TokenType.LOOP,
                 TokenType.IF,
                 TokenType.BREAK,
-                TokenType.RETURN
             };
 
+        static readonly ISet<TokenType> FirstOfExprUnary =
+            new HashSet<TokenType> () {
+                TokenType.NOT,
+                TokenType.SUM,
+                TokenType.SUB,
+                TokenType.IDENTIFIER,
+                TokenType.VAR_INT,
+                TokenType.VAR_CHAR,
+                TokenType.VAR_STRING,
+            };
         static readonly ISet<TokenType> firstOfOperator =
             new HashSet<TokenType> () {
                 TokenType.SUM,
                 TokenType.MUL,
                 TokenType.SUB,
-                TokenType.DIV
+                TokenType.DIV,
+                TokenType.LT,
+                TokenType.LOET,
+                TokenType.GT,
+                TokenType.GOET
             };
 
         static readonly ISet<TokenType> firstOfSimpleExpression =
@@ -61,14 +62,6 @@ namespace DeepLingo {
                 TokenType.FALSE,
                 TokenType.PARENTHESIS_OPEN
             };
-        static readonly ISet<TokenCategory> firstOfExprRel = new HashSet<TokenCategory>(){
-            
-            TokenCategory.LT,
-            TokenCategory.LOET,
-            TokenCategory.GT,
-            TokenCategory.GOET
-        };
-
         IEnumerator<Token> tokenStream;
 
         public Parser (IEnumerator<Token> tokenStream) {
@@ -82,6 +75,15 @@ namespace DeepLingo {
 
         public Token Expect (TokenType category) {
             if (CurrentToken == category) {
+                Token current = tokenStream.Current;
+                tokenStream.MoveNext ();
+                return current;
+            } else {
+                throw new SyntaxError (category, tokenStream.Current);
+            }
+        }
+        public Token ExpectSet (ISet<TokenType> category) {
+            if (category.Contains (CurrentToken)) {
                 Token current = tokenStream.Current;
                 tokenStream.MoveNext ();
                 return current;
@@ -103,83 +105,122 @@ namespace DeepLingo {
             Expect (TokenType.EOF);
         }
 
-        public void VarDef(){
-            Expect(TokenType.VAR);
-            IdList();
-            Expect(TokenType.INSTRUCTION_END);
+        public void VarDef () {
+            Expect (TokenType.VAR);
+            IdList ();
+            Expect (TokenType.INSTRUCTION_END);
         }
 
-        public void FunDef(){
-            Expect(TokenType.IDENTIFIER);
-            Expect(TokenType.PARENTHESIS_OPEN);
-            if(CurrentToken != TokenType.PARENTHESIS_CLOSE){
-                IdList();
-            }
-            Expect(TokenType.PARENTHESIS_CLOSE);
-            Expect(TokenType.BLOCK_BEGIN);
-            while(CurrentToken == TokenType.VAR){
-                VarDef();
-            }
-
-
-
-        }
-
-        public void IdList(){
-            Expect(TokenType.IDENTIFIER);
-            while(CurrentToken == TokenType.LIST){
-                Expect(TokenType.IDENTIFIER);
-            }
-        }
-
-
-
-        // A PARTIR DE AQUI ES CODIGO EJEMPLO
-        // DEL PROFE
-
-
-        public void Declaration () {
-            Type ();
+        public void FunDef () {
             Expect (TokenType.IDENTIFIER);
+            Expect (TokenType.PARENTHESIS_OPEN);
+            if (CurrentToken != TokenType.PARENTHESIS_CLOSE) {
+                IdList ();
+            }
+            Expect (TokenType.PARENTHESIS_CLOSE);
+            Expect (TokenType.BLOCK_BEGIN);
+            while (CurrentToken == TokenType.VAR) {
+                VarDef ();
+            }
+            while (firstOfStatement.Contains (CurrentToken)) {
+                Stmt ();
+            }
+
         }
 
-        public void Statement () {
+        public void IdList () {
+            Expect (TokenType.IDENTIFIER);
+            while (CurrentToken == TokenType.LIST) {
+                Expect (TokenType.IDENTIFIER);
+            }
+        }
 
+        public void Stmt () {
             switch (CurrentToken) {
-
                 case TokenType.IDENTIFIER:
-                    Assignment ();
+                    StmtCall ();
                     break;
-
-                case TokenType.PRINT:
-                    Print ();
-                    break;
-
                 case TokenType.IF:
                     If ();
                     break;
-
+                case TokenType.LOOP:
+                    Loop ();
+                    break;
+                case TokenType.BREAK:
+                    Break ();
+                    break;
+                case TokenType.RETURN:
+                    Return ();
+                    break;
+                case TokenType.INSTRUCTION_END:
+                    Expect (TokenType.INSTRUCTION_END);
+                    break;
                 default:
-                    throw new SyntaxError (firstOfStatement,
-                        tokenStream.Current);
+                    throw new SyntaxError (CurrentToken, tokenStream.Current);
             }
         }
 
-        public void Type () {
+        public void StmtCall () {
+            Expect (TokenType.IDENTIFIER);
             switch (CurrentToken) {
-
-                case TokenType.INT:
-                    Expect (TokenType.INT);
+                case (TokenType.INCR):
+                    Increment ();
                     break;
-
-                case TokenType.BOOL:
-                    Expect (TokenType.BOOL);
+                case (TokenType.DECR):
+                    Decrement ();
                     break;
-
-                default:
-                    throw new SyntaxError (firstOfDeclaration,
-                        tokenStream.Current);
+                case (TokenType.ASSIGN):
+                    Assignment ();
+                    break;
+                case (TokenType.PARENTHESIS_OPEN):
+                    FunCall ();
+                    break;
             }
+
+        }
+
+        public void If () {
+            Expect (TokenType.IF);
+            Expect (TokenType.PARENTHESIS_OPEN);
+            Expression ();
+            Expect (TokenType.PARENTHESIS_CLOSE);
+            Expect (TokenType.BLOCK_BEGIN);
+            while (firstOfStatement.Contains (CurrentToken)) {
+                Stmt ();
+            }
+            Expect (TokenType.BLOCK_END);
+            while (CurrentToken == TokenType.ELSEIF) {
+                Expect (TokenType.ELSEIF);
+                Expect (TokenType.PARENTHESIS_OPEN);
+                Expression ();
+                Expect (TokenType.PARENTHESIS_CLOSE);
+                Expect (TokenType.BLOCK_BEGIN);
+                while (firstOfStatement.Contains (CurrentToken)) {
+                    Stmt ();
+                }
+                Expect (TokenType.BLOCK_END);
+            }
+            if (CurrentToken == TokenType.ELSE) {
+                Expect (TokenType.ELSE);
+                Expect (TokenType.BLOCK_BEGIN);
+                while (firstOfStatement.Contains (CurrentToken)) {
+                    Stmt ();
+                }
+                Expect (TokenType.BLOCK_END);
+            }
+        }
+
+        public void Loop () {
+            Expect (TokenType.LOOP);
+            Expect (TokenType.PARENTHESIS_OPEN);
+            while (firstOfStatement.Contains (CurrentToken)) {
+                Stmt ();
+            }
+        }
+
+        public void Break () {
+            Expect (TokenType.BREAK);
+            Expect (TokenType.INSTRUCTION_END);
         }
 
         public void Assignment () {
@@ -188,96 +229,146 @@ namespace DeepLingo {
             Expression ();
         }
 
-        public void Print () {
-            Expect (TokenType.PRINT);
+        public void Return () {
+            Expect (TokenType.RETURN);
             Expression ();
+            Expect (TokenType.INSTRUCTION_END);
         }
 
-        public void If () {
-            Expect (TokenType.IF);
-            Expression ();
-            Expect (TokenType.THEN);
-            while (firstOfStatement.Contains (CurrentToken)) {
-                Statement ();
+        public void Increment () {
+            Expect (TokenType.INCR);
+            Expect (TokenType.INSTRUCTION_END);
+        }
+
+        public void Decrement () {
+            Expect (TokenType.DECR);
+            Expect (TokenType.INSTRUCTION_END);
+        }
+
+        public void FunCall () {
+            Expect (TokenType.PARENTHESIS_OPEN);
+            while (firstOfSimpleExpression.Contains (CurrentToken)) {
+                Expression ();
             }
-            Expect (TokenType.END);
         }
 
         public void Expression () {
-            SimpleExpression ();
+            ExpressionUnary ();
             while (firstOfOperator.Contains (CurrentToken)) {
                 Operator ();
-                SimpleExpression ();
+                ExpressionUnary ();
             }
+
         }
 
-        public void SimpleExpression () {
+        public void ExpressionUnary () {
 
-            switch (CurrentToken) {
-
-                case TokenType.IDENTIFIER:
-                    Expect (TokenType.IDENTIFIER);
-                    break;
-
-                case TokenType.VAR_INT:
-                    Expect (TokenType.INT_LITERAL);
-                    break;
-
-                case TokenType.TRUE:
-                    Expect (TokenType.TRUE);
-                    break;
-
-                case TokenType.FALSE:
-                    Expect (TokenType.FALSE);
-                    break;
-
-                case TokenType.PARENTHESIS_OPEN:
-                    Expect (TokenType.PARENTHESIS_OPEN);
-                    Expression ();
-                    Expect (TokenType.PARENTHESIS_CLOSE);
-                    break;
-
-                case TokenType.NEG:
-                    Expect (TokenType.NEG);
-                    SimpleExpression ();
-                    break;
-
-                default:
-                    throw new SyntaxError (firstOfSimpleExpression,
-                        tokenStream.Current);
-            }
         }
 
         public void Operator () {
+            ExpectSet (firstOfOperator);
+        }
 
-            switch (CurrentToken) {
+        // A PARTIR DE AQUI ES CODIGO EJEMPLO
+        // DEL PROFE
 
-                case TokenType.AND:
-                    Expect (TokenType.AND);
-                    break;
+        //     public void Declaration () {
+        //         Type ();
+        //         Expect (TokenType.IDENTIFIER);
+        //     }
 
-                case TokenType.LESS:
-                    Expect (TokenType.LESS);
-                    break;
+        //     public void Type () {
+        //         switch (CurrentToken) {
 
-                case TokenType.PLUS:
-                    Expect (TokenType.PLUS);
-                    break;
+        //             case TokenType.INT:
+        //                 Expect (TokenType.INT);
+        //                 break;
 
-                case TokenType.MUL:
-                    Expect (TokenType.MUL);
-                    break;
+        //             case TokenType.BOOL:
+        //                 Expect (TokenType.BOOL);
+        //                 break;
 
-                default:
-                    throw new SyntaxError (firstOfOperator,
-                        tokenStream.Current);
+        //             default:
+        //                 throw new SyntaxError (firstOfDeclaration,
+        //                     tokenStream.Current);
+        //         }
+        //     }
+
+        //     // public void Expression () {
+        //     //     SimpleExpression ();
+        //     //     while (firstOfOperator.Contains (CurrentToken)) {
+        //     //         Operator ();
+        //     //         SimpleExpression ();
+        //     //     }
+        //     // }
+
+        //     public void SimpleExpression () {
+
+        //         switch (CurrentToken) {
+
+        //             case TokenType.IDENTIFIER:
+        //                 Expect (TokenType.IDENTIFIER);
+        //                 break;
+
+        //             case TokenType.VAR_INT:
+        //                 Expect (TokenType.INT_LITERAL);
+        //                 break;
+
+        //             case TokenType.TRUE:
+        //                 Expect (TokenType.TRUE);
+        //                 break;
+
+        //             case TokenType.FALSE:
+        //                 Expect (TokenType.FALSE);
+        //                 break;
+
+        //             case TokenType.PARENTHESIS_OPEN:
+        //                 Expect (TokenType.PARENTHESIS_OPEN);
+        //                 Expression ();
+        //                 Expect (TokenType.PARENTHESIS_CLOSE);
+        //                 break;
+
+        //             case TokenType.NEG:
+        //                 Expect (TokenType.NEG);
+        //                 SimpleExpression ();
+        //                 break;
+
+        //             default:
+        //                 throw new SyntaxError (firstOfSimpleExpression,
+        //                     tokenStream.Current);
+        //         }
+        //     }
+
+        //     public void Operator () {
+
+        //         switch (CurrentToken) {
+
+        //             case TokenType.AND:
+        //                 Expect (TokenType.AND);
+        //                 break;
+
+        //             case TokenType.LESS:
+        //                 Expect (TokenType.LESS);
+        //                 break;
+
+        //             case TokenType.PLUS:
+        //                 Expect (TokenType.PLUS);
+        //                 break;
+
+        //             case TokenType.MUL:
+        //                 Expect (TokenType.MUL);
+        //                 break;
+
+        //             default:
+        //                 throw new SyntaxError (firstOfOperator,
+        //                     tokenStream.Current);
+        //         }
+        //     }
+        // }
+
+        class SyntaxError : System.Exception {
+            public SyntaxError (dynamic category, Token tok) {
+
             }
         }
     }
-
-    class SyntaxError : System.Exception {
-        public SyntaxError (dynamic category, Token tok) {
-
-        }
-    }
-}
