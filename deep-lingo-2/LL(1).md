@@ -44,18 +44,14 @@ stmt-return -> return expr;
 stmt-empty  -> ;
 
 # Expressions
-expr-list   -> expr*
-expr        -> ( expr-or | expr-and | expr-comp | expr-op )
-expr-comp   -> ( lit | expr-comp) ("==" | "!=" | "<" | "<=" | ">" | ">=") ( lit | expr-comp)
-expr-or     -> expr-or (|| expr-and)*
-expr-and    -> expr-and (&& expr-comp)*
 
-#Unary expressions can't be 
+expr        -> expr-unary (op expr-unary)*
+op          -> (op-bool | op-comp | op-math)
+op-bool     -> ( expr-or | expr-and | expr-comp )
+op-comp     -> ("==" | "!=" | "<" | "<=" | ">" | ">=")
+op-math     -> (expr-add | expr-substract | expr-mult | expr-div | expr-mod )
+
 expr-unary  -> ("+"| "!"| "-") ("id"|"fun-call"|"lit"|"array")
-expr-op     -> (expr-add | expr-substract | expr-mult | expr-div | expr-mod )
-
-#Pregunta ¿puedo hacer esto?
-expr-add    -> expr-unary ("+" expr-add)
 
 array       -> "[" expr-list "]"    
 lit         -> (lit-int | lit-char | lit-string)
