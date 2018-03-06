@@ -125,7 +125,7 @@ namespace DeepLingo {
 
         public IEnumerable<Token> Start() {
 
-            var row = 1;
+            var row = -1;
             var columnStart = 0;
             Console.WriteLine(regex.Matches(input));
             Func<Match, TokenType, Token> newTok = (m, tc) =>
@@ -134,6 +134,12 @@ namespace DeepLingo {
             foreach (Match m in regex.Matches(input)) {
                 if (m.Groups["WhiteSpace"].Success 
                     || m.Groups["Comment"].Success) {
+                    if(m.Groups["Comment"].Success){
+                        String[] split = m.Value.Split(new[] { "\n" },StringSplitOptions.None);
+                        foreach (string s in split){
+                            row++;
+                        }
+                    }
                     
                     // Skip white space and comments.
 
