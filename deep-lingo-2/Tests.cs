@@ -19,7 +19,7 @@ namespace DeepLingo {
 			var input = File.ReadAllText (inputFile);
 			var count = 1;
 			foreach (var tok in new Scanner (input).Start ()) {
-				Console.WriteLine (String.Format ("[{0}] {1} Arrojó illegal char",
+				Console.WriteLine (String.Format ("[{0}] {1}",
 					count++, tok));
 			}
 			var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
