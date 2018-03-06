@@ -30,6 +30,7 @@ namespace DeepLingo {
                 TokenType.LOOP,
                 TokenType.IF,
                 TokenType.BREAK,
+                TokenType.RETURN
             };
 
         static readonly ISet<TokenType> FirstOfExprUnary =
@@ -134,8 +135,9 @@ namespace DeepLingo {
 
             while (CurrentToken == TokenType.IDENTIFIER) {
                 FunDef ();
+                Expect (TokenType.BLOCK_END);
             }
-
+            
             Expect (TokenType.EOF);
         }
 
@@ -159,8 +161,6 @@ namespace DeepLingo {
             while (firstOfStatement.Contains (CurrentToken)) {
                 Stmt ();
             }
-            Expect (TokenType.BLOCK_END);
-
 
         }
 
