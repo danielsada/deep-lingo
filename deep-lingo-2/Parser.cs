@@ -23,7 +23,7 @@ using System.Collections.Generic;
 namespace DeepLingo {
 
     class Parser {
-
+        private ISet<TokenType> firstOfOperator = new HashSet<TokenType>();
         static readonly ISet<TokenType> firstOfStatement =
             new HashSet<TokenType> () {
                 TokenType.IDENTIFIER,
@@ -43,7 +43,8 @@ namespace DeepLingo {
                 TokenType.VAR_CHAR,
                 TokenType.VAR_STRING,
             };
-        static readonly ISet<TokenType> firstOfOperator =
+        
+        /*static readonly ISet<TokenType> firstOfOperator =
             new HashSet<TokenType> () {
                 TokenType.SUM,
                 TokenType.MUL,
@@ -55,8 +56,10 @@ namespace DeepLingo {
                 TokenType.GOET,
                 TokenType.EQUALS,
                 TokenType.MOD,
-                TokenType.NOT_EQUALS
-            };
+                TokenType.NOT_EQUALS,
+                TokenType.OR,
+                TokenType.AND
+            };*/
         static readonly ISet<TokenType> firstOfOperatorBool =
             new HashSet<TokenType> () {
                 TokenType.OR,
@@ -94,6 +97,9 @@ namespace DeepLingo {
         public Parser (IEnumerator<Token> tokenStream) {
             this.tokenStream = tokenStream;
             this.tokenStream.MoveNext ();
+            firstOfOperator.UnionWith(firstOfOperatorComp);
+            firstOfOperator.UnionWith(firstOfOperatorBool);
+            firstOfOperator.UnionWith(firstOfOperatorMath);
         }
 
         public TokenType CurrentToken {
