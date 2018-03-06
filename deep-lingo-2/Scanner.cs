@@ -46,6 +46,9 @@ namespace DeepLingo {
               | (?<IntLiteral>        \d+                    )
               | (?<CharLiteral>       (['][^\\'""]?['])|(['][\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6})['])       ) 
               | (?<StringLiteral>     \""(\\.|[^\""])*\""    )
+              | (?<Incr>               [+]{2}                    )
+              | (?<Decr>               [+]{2}                    )
+              | (?<Mul>               [*]                    )
               | (?<Mul>               [*]                    )
               | (?<Sub>               [-]                    )
               | (?<Neg>               [!]                    )
@@ -112,7 +115,9 @@ namespace DeepLingo {
                 {"ListSeparator", TokenType.LIST},
                 {"InstrEnd", TokenType.INSTRUCTION_END},
                 {"Plus", TokenType.SUM},
-                {"True", TokenType.TRUE}
+                {"True", TokenType.TRUE},
+                {"Incr", TokenType.INCR},
+                {"Decr", TokenType.DECR}
             };
 
         public Scanner(string input) {
