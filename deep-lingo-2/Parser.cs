@@ -51,7 +51,8 @@ namespace DeepLingo {
                 TokenType.LT,
                 TokenType.LOET,
                 TokenType.GT,
-                TokenType.GOET
+                TokenType.GOET,
+                TokenType.EQUALS
             };
         static readonly ISet<TokenType> firstOfOperatorBool =
             new HashSet<TokenType> () {
@@ -260,7 +261,10 @@ namespace DeepLingo {
             //Expect (TokenType.IDENTIFIER);
             Expect (TokenType.ASSIGN);
             Expression ();
-            Expect (TokenType.INSTRUCTION_END);
+            if (CurrentToken == TokenType.INSTRUCTION_END){
+                Expect (TokenType.INSTRUCTION_END);
+            }
+            
         }
 
         public void Return () {
