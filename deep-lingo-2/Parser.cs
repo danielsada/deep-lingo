@@ -41,7 +41,7 @@ namespace DeepLingo {
                 TokenType.IDENTIFIER,
                 TokenType.VAR_INT,
                 TokenType.VAR_CHAR,
-                TokenType.VAR_STRING,
+                TokenType.VAR_STRING
             };
         
         /*static readonly ISet<TokenType> firstOfOperator =
@@ -90,7 +90,8 @@ namespace DeepLingo {
                 TokenType.VAR_STRING,
                 TokenType.TRUE,
                 TokenType.FALSE,
-                TokenType.PARENTHESIS_OPEN
+                TokenType.PARENTHESIS_OPEN,
+                TokenType.NOT
             };
         IEnumerator<Token> tokenStream;
 
@@ -323,6 +324,7 @@ namespace DeepLingo {
         }
 
         public void ExpressionUnary () {
+            Console.WriteLine("lol");
             if (FirstOfExprUnary.Contains (CurrentToken)) {
                 switch (CurrentToken) {
                     case TokenType.SUM:
