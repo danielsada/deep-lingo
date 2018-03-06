@@ -357,6 +357,9 @@ namespace DeepLingo {
                 case TokenType.VAR_STRING:
                     Literal ();
                     break;
+                case TokenType.TRUE:
+                    Expect(TokenType.TRUE);
+                break;
                 default:
                     break;
             }
