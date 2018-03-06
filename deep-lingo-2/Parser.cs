@@ -324,7 +324,6 @@ namespace DeepLingo {
         }
 
         public void ExpressionUnary () {
-            Console.WriteLine("lol");
             if (FirstOfExprUnary.Contains (CurrentToken)) {
                 switch (CurrentToken) {
                     case TokenType.SUM:
