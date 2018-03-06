@@ -19,6 +19,10 @@ namespace DeepLingo {
 			var input = File.ReadAllText (inputFile);
 			var count = 1;
 			foreach (var tok in new Scanner (input).Start ()) {
+				if(tok.Lexeme == "42" && tok.Category != TokenType.TRUE){
+					Console.WriteLine("NO PUSISTE 42 como TRUE :'v");
+					throw new Exception();
+				}
 				Console.WriteLine (String.Format ("[{0}] {1}",
 					count++, tok));
 			}
