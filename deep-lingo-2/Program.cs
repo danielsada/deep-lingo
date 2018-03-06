@@ -37,6 +37,7 @@ namespace DeepLingo {
                     }
                     var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
                     parser.Program ();
+                    Console.WriteLine("Syntax OK.");
                     // Parser parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
                 } catch (FileNotFoundException e) {
                     Console.Error.WriteLine (e.Message);
