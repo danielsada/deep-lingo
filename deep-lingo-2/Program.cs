@@ -35,12 +35,14 @@ namespace DeepLingo {
                         Console.WriteLine (String.Format ("[{0}] {1}",
                             count++, tok));
                     }
-                    // var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
-                    // parser.Program ();
+                    var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
+                    parser.Program ();
                     // Parser parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
                 } catch (FileNotFoundException e) {
                     Console.Error.WriteLine (e.Message);
                     Environment.Exit (1);
+                } catch (SyntaxError s){
+                    Console.WriteLine(s);
                 }
             }
         }

@@ -14,7 +14,7 @@ namespace DeepLingo {
 				TestFile ("./example-programs/palindrome.deep", "Palindrome");
 				TestFile ("./example-programs/ultimate.deep", "Ultimate");
 				TestFile ("./example-programs/factorial.deep", "Factorial");
-				Console.WriteLine($"You passed out of 7 tests.");
+				Console.WriteLine($"You passed 7 out of 7 tests.");
 			
 		}
 

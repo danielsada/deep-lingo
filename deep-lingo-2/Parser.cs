@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace DeepLingo {
 
@@ -115,13 +116,6 @@ namespace DeepLingo {
                 tokenStream.MoveNext ();
                 return current;
             } else {
-                Console.WriteLine ($"Error row {tokenStream.Current.Row} Error Info {tokenStream.Current.Lexeme}");
-                Console.WriteLine ($"Failure: Expected {category.ToString()}, got {CurrentToken}");
-                Console.WriteLine ("Next ten tokens\n");
-                for (int i = 0; i < 10; i++) {
-                    tokenStream.MoveNext ();
-                    Console.WriteLine ($"[{i}] {tokenStream.Current.Lexeme} \n ");
-                }
                 throw new SyntaxError (category, tokenStream.Current);
             }
 
@@ -470,108 +464,6 @@ namespace DeepLingo {
             }
         }
 
-        // A PARTIR DE AQUI ES CODIGO EJEMPLO
-        // DEL PROFE
 
-        //     public void Declaration () {
-        //         Type ();
-        //         Expect (TokenType.IDENTIFIER);
-        //     }
-
-        //     public void Type () {
-        //         switch (CurrentToken) {
-
-        //             case TokenType.INT:
-        //                 Expect (TokenType.INT);
-        //                 break;
-
-        //             case TokenType.BOOL:
-        //                 Expect (TokenType.BOOL);
-        //                 break;
-
-        //             default:
-        //                 throw new SyntaxError (firstOfDeclaration,
-        //                     tokenStream.Current);
-        //         }
-        //     }
-
-        //     // public void Expression () {
-        //     //     SimpleExpression ();
-        //     //     while (firstOfOperator.Contains (CurrentToken)) {
-        //     //         Operator ();
-        //     //         SimpleExpression ();
-        //     //     }
-        //     // }
-
-        //     public void SimpleExpression () {
-
-        //         switch (CurrentToken) {
-
-        //             case TokenType.IDENTIFIER:
-        //                 Expect (TokenType.IDENTIFIER);
-        //                 break;
-
-        //             case TokenType.VAR_INT:
-        //                 Expect (TokenType.INT_LITERAL);
-        //                 break;
-
-        //             case TokenType.TRUE:
-        //                 Expect (TokenType.TRUE);
-        //                 break;
-
-        //             case TokenType.FALSE:
-        //                 Expect (TokenType.FALSE);
-        //                 break;
-
-        //             case TokenType.PARENTHESIS_OPEN:
-        //                 Expect (TokenType.PARENTHESIS_OPEN);
-        //                 Expression ();
-        //                 Expect (TokenType.PARENTHESIS_CLOSE);
-        //                 break;
-
-        //             case TokenType.NEG:
-        //                 Expect (TokenType.NEG);
-        //                 SimpleExpression ();
-        //                 break;
-
-        //             default:
-        //                 throw new SyntaxError (firstOfSimpleExpression,
-        //                     tokenStream.Current);
-        //         }
-        //     }
-
-        //     public void Operator () {
-
-        //         switch (CurrentToken) {
-
-        //             case TokenType.AND:
-        //                 Expect (TokenType.AND);
-        //                 break;
-
-        //             case TokenType.LESS:
-        //                 Expect (TokenType.LESS);
-        //                 break;
-
-        //             case TokenType.PLUS:
-        //                 Expect (TokenType.PLUS);
-        //                 break;
-
-        //             case TokenType.MUL:
-        //                 Expect (TokenType.MUL);
-        //                 break;
-
-        //             default:
-        //                 throw new SyntaxError (firstOfOperator,
-        //                     tokenStream.Current);
-        //         }
-        //     }
-        // }
-
-        class SyntaxError : System.Exception {
-            public SyntaxError (dynamic category, Token tok) {
-
-            }
-        }
-        //}
     }
 }
