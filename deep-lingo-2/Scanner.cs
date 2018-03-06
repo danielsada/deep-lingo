@@ -40,6 +40,7 @@ namespace DeepLingo {
               | (?<NotEquals>         [!][=]                 )  
               | (?<Equals>            [=]{2}                 )
               | (?<Assign>            [=]                    )
+              | (?<True>              [4][2]                 )
               | (?<False>             ^(?!42$)\d+            )
               | (?<Var>               [v][a][r]                        )
               | (?<Identifier>        [a-zA-Z_0-9]+             )
@@ -63,7 +64,6 @@ namespace DeepLingo {
               | (?<ArrEnd>            [\]]                   )
               | (?<ListSeparator>     [,]                    )
               | (?<Plus>              [+]                    )              
-              | (?<True>              [4][2]                 )
               | (?<WhiteSpace>        \s                     )     
               | (?<Other>             .                      )  
             ", 
