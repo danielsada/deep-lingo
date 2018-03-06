@@ -159,6 +159,8 @@ namespace DeepLingo {
             while (firstOfStatement.Contains (CurrentToken)) {
                 Stmt ();
             }
+            Expect (TokenType.BLOCK_END);
+
 
         }
 
