@@ -261,10 +261,10 @@ namespace DeepLingo {
             //Expect (TokenType.IDENTIFIER);
             Expect (TokenType.ASSIGN);
             Expression ();
-            if (CurrentToken == TokenType.INSTRUCTION_END){
+            if (CurrentToken == TokenType.INSTRUCTION_END) {
                 Expect (TokenType.INSTRUCTION_END);
             }
-            
+
         }
 
         public void Return () {
@@ -287,6 +287,10 @@ namespace DeepLingo {
             Expect (TokenType.PARENTHESIS_OPEN);
             while (firstOfSimpleExpression.Contains (CurrentToken)) {
                 Expression ();
+                while (CurrentToken == TokenType.LIST) {
+                    Expect (TokenType.LIST);
+                    Expression ();
+                }
             }
             Expect (TokenType.PARENTHESIS_CLOSE);
             Expect (TokenType.INSTRUCTION_END);
