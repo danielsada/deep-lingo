@@ -207,6 +207,7 @@ namespace DeepLingo {
                     break;
                 case (TokenType.PARENTHESIS_OPEN):
                     FunCall ();
+                    Expect (TokenType.INSTRUCTION_END);
                     break;
             }
 
@@ -293,7 +294,7 @@ namespace DeepLingo {
                 }
             }
             Expect (TokenType.PARENTHESIS_CLOSE);
-            Expect (TokenType.INSTRUCTION_END);
+            //Expect (TokenType.INSTRUCTION_END);
         }
 
         public void Expression () {
