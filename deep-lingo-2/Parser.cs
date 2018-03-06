@@ -105,7 +105,13 @@ namespace DeepLingo {
                 tokenStream.MoveNext ();
                 return current;
             } else {
+                Console.WriteLine ($"Error row {tokenStream.Current.Row} Error Info {tokenStream.Current.Lexeme}");
                 Console.WriteLine ($"Failure: Expected {category.ToString()}, got {CurrentToken}");
+                Console.WriteLine ("Next ten tokens\n");
+                for (int i = 0; i < 10; i++) {
+                    tokenStream.MoveNext ();
+                    Console.WriteLine ($"[{i}] {tokenStream.Current.Lexeme} \n ");
+                }
                 throw new SyntaxError (category, tokenStream.Current);
             }
 
