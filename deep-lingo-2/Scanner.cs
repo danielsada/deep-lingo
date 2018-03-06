@@ -47,7 +47,7 @@ namespace DeepLingo {
               | (?<CharLiteral>       (['][^\\'""]?['])|(['][\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6})['])       ) 
               | (?<StringLiteral>     \""(\\.|[^\""])*\""    )
               | (?<Incr>               [+]{2}                    )
-              | (?<Decr>               [+]{2}                    )
+              | (?<Decr>               [-]{2}                    )
               | (?<Mul>               [*]                    )
               | (?<Mul>               [*]                    )
               | (?<Sub>               [-]                    )
