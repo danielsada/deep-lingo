@@ -31,8 +31,8 @@ namespace DeepLingo {
         static readonly Regex regex = new Regex(
             @"
                 (?<Comment>           (\/\/)(.*)|(\/\*)((.|\n)*)(\*\/))                             
-              | (?<And>               [&]                    )
-              | (?<Or>                [|]                    )
+              | (?<And>               [&]{2}                    )
+              | (?<Or>                [|]{2}                    )
               | (?<LessOrEqual>       [<][=]                 )
               | (?<Less>              [<]                    )
               | (?<GreaterOrEqual>    [>][=]                 )          

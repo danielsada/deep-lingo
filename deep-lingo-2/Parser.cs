@@ -54,7 +54,10 @@ namespace DeepLingo {
                 TokenType.GT,
                 TokenType.GOET,
                 TokenType.EQUALS,
-                TokenType.MOD
+                TokenType.MOD,
+                TokenType.NOT_EQUALS,
+                TokenType.AND,
+                TokenType.OR
             };
         static readonly ISet<TokenType> firstOfOperatorBool =
             new HashSet<TokenType> () {
