@@ -166,7 +166,11 @@ namespace DeepLingo {
         public void Stmt () {
             switch (CurrentToken) {
                 case TokenType.IDENTIFIER:
-                    StmtCall ();
+                    if (CurrentToken == TokenType.PARENTHESIS_OPEN) {
+                        FunCall ();
+                    } else {
+                        StmtCall ();
+                    }
                     break;
                 case TokenType.IF:
                     If ();
@@ -310,25 +314,26 @@ namespace DeepLingo {
 
                 }
             }
-            while (firstOfSimpleExpression.Contains (CurrentToken) & CurrentToken != TokenType.INSTRUCTION_END) {
-                switch (CurrentToken) {
-                    case TokenType.IDENTIFIER:
-                        Expect (TokenType.IDENTIFIER);
-                        break;
-                    case TokenType.PARENTHESIS_OPEN:
+            switch (CurrentToken) {
+                case TokenType.IDENTIFIER:
+                    Expect (TokenType.IDENTIFIER);
+                    if (CurrentToken == TokenType.PARENTHESIS_OPEN) {
                         FunCall ();
-                        break;
-                    case TokenType.ARR_BEGIN:
-                        Array ();
-                        break;
-                    case TokenType.VAR_CHAR:
-                    case TokenType.VAR_INT:
-                    case TokenType.VAR_STRING:
-                        Literal ();
-                        break;
-                    default:
-                        break;
-                }
+                    }
+                    break;
+                case TokenType.PARENTHESIS_OPEN:
+                    FunCall ();
+                    break;
+                case TokenType.ARR_BEGIN:
+                    Array ();
+                    break;
+                case TokenType.VAR_CHAR:
+                case TokenType.VAR_INT:
+                case TokenType.VAR_STRING:
+                    Literal ();
+                    break;
+                default:
+                    break;
             }
         }
         public void Array () {
