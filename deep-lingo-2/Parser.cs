@@ -79,6 +79,8 @@ namespace DeepLingo {
             new HashSet<TokenType> () {
                 TokenType.IDENTIFIER,
                 TokenType.VAR_INT,
+                TokenType.VAR_CHAR,
+                TokenType.VAR_STRING,
                 TokenType.TRUE,
                 TokenType.FALSE,
                 TokenType.PARENTHESIS_OPEN
@@ -278,6 +280,8 @@ namespace DeepLingo {
             while (firstOfSimpleExpression.Contains (CurrentToken)) {
                 Expression ();
             }
+            Expect (TokenType.PARENTHESIS_CLOSE);
+            Expect (TokenType.INSTRUCTION_END);
         }
 
         public void Expression () {
