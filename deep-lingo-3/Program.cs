@@ -37,13 +37,15 @@ namespace DeepLingo {
                     // }
                     var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
                     parser.Program ();
-                    Console.WriteLine("Syntax OK.");
+                    // Cuando se arregle paso dos, decomentar la linea de aqui abajo.
+                    //var prog = parser.Program ();
+                    Console.WriteLine ("Syntax OK.");
                     // Parser parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
                 } catch (FileNotFoundException e) {
                     Console.Error.WriteLine (e.Message);
                     Environment.Exit (1);
-                } catch (SyntaxError s){
-                    Console.WriteLine(s);
+                } catch (SyntaxError s) {
+                    Console.WriteLine (s);
                 }
             }
         }
