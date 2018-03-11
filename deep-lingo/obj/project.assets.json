@@ -670,11 +670,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/danielsada/Developer/school/compilers/project/deep-lingo-2/deeplingo.csproj",
+      "projectUniqueName": "/Users/danielsada/Developer/school/compilers/project/deep-lingo/deeplingo.csproj",
       "projectName": "deeplingo",
-      "projectPath": "/Users/danielsada/Developer/school/compilers/project/deep-lingo-2/deeplingo.csproj",
+      "projectPath": "/Users/danielsada/Developer/school/compilers/project/deep-lingo/deeplingo.csproj",
       "packagesPath": "/Users/danielsada/.nuget/packages/",
-      "outputPath": "/Users/danielsada/Developer/school/compilers/project/deep-lingo-2/obj/",
+      "outputPath": "/Users/danielsada/Developer/school/compilers/project/deep-lingo/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"

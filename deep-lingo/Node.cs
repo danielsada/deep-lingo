@@ -12,6 +12,7 @@ namespace DeepLingo {
             get {
                 return children[index];
             }
+
         }
 
         public Token AnchorToken { get; set; }

@@ -94,8 +94,8 @@ namespace DeepLingo {
 
         public Token Expect (TokenType category) {
 
-                if (CurrentToken == category) {
-                    Console.WriteLine ($"Success : Expected {category.ToString ()}, got {CurrentToken}, \n Token: {tokenstrem});
+            if (CurrentToken == category) {
+                Console.WriteLine ($"Success : Expected {category.ToString ()}, got {CurrentToken}, \n Token: ");
                 Token current = tokenStream.Current;
                 tokenStream.MoveNext ();
                 return current;
