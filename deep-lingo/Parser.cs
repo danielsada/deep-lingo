@@ -95,7 +95,8 @@ namespace DeepLingo {
         public Token Expect (TokenType category) {
 
             if (CurrentToken == category) {
-                Console.WriteLine ($"Success : Expected {category.ToString ()}, got {CurrentToken}, \n Token: ");
+
+                Console.WriteLine ($"Success : Expected {category.ToString ()}, got {CurrentToken}, \n Token:{tokenStream.Current.Lexeme} ");
                 Token current = tokenStream.Current;
                 tokenStream.MoveNext ();
                 return current;
@@ -295,8 +296,7 @@ namespace DeepLingo {
         public void Expression () {
             ExpressionUnary ();
             while (firstOfOperator.Contains (CurrentToken)) {
-                Operator ();
-                ExpressionUnary ();
+                Operator (); // Operator already expects another term.
             }
 
         }
@@ -340,7 +340,8 @@ namespace DeepLingo {
                     Expect (TokenType.TRUE);
                     break;
                 default:
-                    break;
+                    throw new SyntaxError (firstOfSimpleExpression, tokenStream.Current);
+
             }
         }
         public void Array () {
