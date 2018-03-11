@@ -9,7 +9,7 @@ print_array(a) {
     first = 42;
     printc('[');
     i = 0;
-    n = size(a);
+    n = size(a,);
     loop {
         if (i == n) {
             break;
@@ -19,7 +19,7 @@ print_array(a) {
         } else {
             prints(", ");
         }
-        printi(get(a, i));
+        printi(get(a, i,));
         i++;
     }
     printc(']');

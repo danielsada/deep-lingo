@@ -24,7 +24,7 @@ using System.Text;
 namespace DeepLingo {
 
     class Parser {
-        private ISet<TokenType> firstOfOperator = new HashSet<TokenType>();
+        private ISet<TokenType> firstOfOperator = new HashSet<TokenType> ();
         static readonly ISet<TokenType> firstOfStatement =
             new HashSet<TokenType> () {
                 TokenType.IDENTIFIER,
@@ -44,23 +44,7 @@ namespace DeepLingo {
                 TokenType.VAR_CHAR,
                 TokenType.VAR_STRING
             };
-        
-        /*static readonly ISet<TokenType> firstOfOperator =
-            new HashSet<TokenType> () {
-                TokenType.SUM,
-                TokenType.MUL,
-                TokenType.SUB,
-                TokenType.DIV,
-                TokenType.LT,
-                TokenType.LOET,
-                TokenType.GT,
-                TokenType.GOET,
-                TokenType.EQUALS,
-                TokenType.MOD,
-                TokenType.NOT_EQUALS,
-                TokenType.OR,
-                TokenType.AND
-            };*/
+
         static readonly ISet<TokenType> firstOfOperatorBool =
             new HashSet<TokenType> () {
                 TokenType.OR,
@@ -99,9 +83,9 @@ namespace DeepLingo {
         public Parser (IEnumerator<Token> tokenStream) {
             this.tokenStream = tokenStream;
             this.tokenStream.MoveNext ();
-            firstOfOperator.UnionWith(firstOfOperatorComp);
-            firstOfOperator.UnionWith(firstOfOperatorBool);
-            firstOfOperator.UnionWith(firstOfOperatorMath);
+            firstOfOperator.UnionWith (firstOfOperatorComp);
+            firstOfOperator.UnionWith (firstOfOperatorBool);
+            firstOfOperator.UnionWith (firstOfOperatorMath);
         }
 
         public TokenType CurrentToken {
@@ -110,8 +94,8 @@ namespace DeepLingo {
 
         public Token Expect (TokenType category) {
 
-            if (CurrentToken == category) {
-                // Console.WriteLine ($"Success: Expected {category.ToString()}, got {CurrentToken}");
+                if (CurrentToken == category) {
+                    Console.WriteLine ($"Success : Expected {category.ToString ()}, got {CurrentToken}, \n Token: {tokenstrem});
                 Token current = tokenStream.Current;
                 tokenStream.MoveNext ();
                 return current;
@@ -140,7 +124,7 @@ namespace DeepLingo {
                 FunDef ();
                 Expect (TokenType.BLOCK_END);
             }
-            
+
             Expect (TokenType.EOF);
         }
 
@@ -353,8 +337,8 @@ namespace DeepLingo {
                     Literal ();
                     break;
                 case TokenType.TRUE:
-                    Expect(TokenType.TRUE);
-                break;
+                    Expect (TokenType.TRUE);
+                    break;
                 default:
                     break;
             }
@@ -383,7 +367,7 @@ namespace DeepLingo {
                     Expect (TokenType.VAR_STRING);
                     break;
                 default:
-                    throw new SyntaxError(CurrentToken, tokenStream.Current);
+                    throw new SyntaxError (CurrentToken, tokenStream.Current);
             }
         }
 
@@ -463,7 +447,6 @@ namespace DeepLingo {
                 Expression ();
             }
         }
-
 
     }
 }
