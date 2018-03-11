@@ -1,22 +1,3 @@
-/*
-  Buttercup compiler - This class performs the syntactic analysis,
-  (a.k.a. parsing).
-  Copyright (C) 2013 Ariel Ortiz, ITESM CEM
-  
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -115,7 +96,7 @@ namespace DeepLingo {
             }
         }
 
-        public void Program () {
+        public Node Program () {
 
             while (CurrentToken == TokenType.VAR) {
                 VarDef ();
@@ -129,13 +110,13 @@ namespace DeepLingo {
             Expect (TokenType.EOF);
         }
 
-        public void VarDef () {
+        public Node VarDef () {
             Expect (TokenType.VAR);
             IdList ();
             Expect (TokenType.INSTRUCTION_END);
         }
 
-        public void FunDef () {
+        public Node FunDef () {
             Expect (TokenType.IDENTIFIER);
             Expect (TokenType.PARENTHESIS_OPEN);
             if (CurrentToken != TokenType.PARENTHESIS_CLOSE) {
@@ -152,7 +133,7 @@ namespace DeepLingo {
 
         }
 
-        public void IdList () {
+        public Node IdList () {
             Expect (TokenType.IDENTIFIER);
             while (CurrentToken == TokenType.LIST) {
                 Expect (TokenType.LIST);
@@ -160,7 +141,7 @@ namespace DeepLingo {
             }
         }
 
-        public void Stmt () {
+        public Node Stmt () {
             switch (CurrentToken) {
                 case TokenType.IDENTIFIER:
                     if (CurrentToken == TokenType.PARENTHESIS_OPEN) {
@@ -189,7 +170,7 @@ namespace DeepLingo {
             }
         }
 
-        public void StmtCall () {
+        public Node StmtCall () {
             Expect (TokenType.IDENTIFIER);
             switch (CurrentToken) {
                 case (TokenType.INCR):
@@ -209,7 +190,7 @@ namespace DeepLingo {
 
         }
 
-        public void If () {
+        public Node If () {
             Expect (TokenType.IF);
             Expect (TokenType.PARENTHESIS_OPEN);
             Expression ();
@@ -240,7 +221,7 @@ namespace DeepLingo {
             }
         }
 
-        public void Loop () {
+        public Node Loop () {
             Expect (TokenType.LOOP);
             Expect (TokenType.BLOCK_BEGIN);
             while (firstOfStatement.Contains (CurrentToken)) {
@@ -249,12 +230,12 @@ namespace DeepLingo {
             Expect (TokenType.BLOCK_END);
         }
 
-        public void Break () {
+        public Node Break () {
             Expect (TokenType.BREAK);
             Expect (TokenType.INSTRUCTION_END);
         }
 
-        public void Assignment () {
+        public Node Assignment () {
             //Expect (TokenType.IDENTIFIER);
             Expect (TokenType.ASSIGN);
             Expression ();
@@ -264,23 +245,23 @@ namespace DeepLingo {
 
         }
 
-        public void Return () {
+        public Node Return () {
             Expect (TokenType.RETURN);
             Expression ();
             Expect (TokenType.INSTRUCTION_END);
         }
 
-        public void Increment () {
+        public Node Increment () {
             Expect (TokenType.INCR);
             Expect (TokenType.INSTRUCTION_END);
         }
 
-        public void Decrement () {
+        public Node Decrement () {
             Expect (TokenType.DECR);
             Expect (TokenType.INSTRUCTION_END);
         }
 
-        public void FunCall () {
+        public Node FunCall () {
             Expect (TokenType.PARENTHESIS_OPEN);
             while (firstOfSimpleExpression.Contains (CurrentToken)) {
                 Expression ();
@@ -293,15 +274,16 @@ namespace DeepLingo {
             //Expect (TokenType.INSTRUCTION_END);
         }
 
-        public void Expression () {
+        public Node Expression () {
             ExpressionUnary ();
             while (firstOfOperator.Contains (CurrentToken)) {
-                Operator (); // Operator already expects another term.
+                Operator ();
+                ExpressionUnary ();
             }
 
         }
 
-        public void ExpressionUnary () {
+        public Node ExpressionUnary () {
             if (FirstOfExprUnary.Contains (CurrentToken)) {
                 switch (CurrentToken) {
                     case TokenType.SUM:
@@ -344,109 +326,109 @@ namespace DeepLingo {
 
             }
         }
-        public void Array () {
+        public Node Array () {
+            // No estoy muy seguro como se hace este.
+            // Ayura.
             Expect (TokenType.ARR_BEGIN);
+            Node n1;
             if (TokenType.ARR_END != CurrentToken) {
-                Expression ();
+                n1 = Expression ();
                 while (TokenType.LIST == CurrentToken) {
                     Expect (TokenType.LIST);
-                    Expression ();
+                    var n2 = Expression ();
+                    n2.Add (n1);
+                    n1 = n2;
                 }
             }
-
             Expect (TokenType.ARR_END);
+            //return n1; CREO QUE ESTO VA AQUI
         }
-        public void Literal () {
+        public Node Literal () {
             switch (CurrentToken) {
                 case TokenType.VAR_INT:
-                    Expect (TokenType.VAR_INT);
-                    break;
+                    return new VarInt () { AnchorToken = Expect (TokenType.VAR_INT) };
                 case TokenType.VAR_CHAR:
-                    Expect (TokenType.VAR_CHAR);
-                    break;
+                    return new VarChar () { AnchorToken = Expect (TokenType.VAR_CHAR) };
                 case TokenType.VAR_STRING:
-                    Expect (TokenType.VAR_STRING);
-                    break;
+                    return new VarString () { AnchorToken = Expect (TokenType.VAR_STRING) };
                 default:
                     throw new SyntaxError (CurrentToken, tokenStream.Current);
             }
         }
 
-        public void Operator () {
+        public Node Operator () {
+            // Tenemos aqui que regresar algo con el operador de enmedio.
+            dynamic oper = null;
             if (firstOfOperatorBool.Contains (CurrentToken)) {
-                OperatorBool ();
+                oper = OperatorBool ();
             } else if (firstOfOperatorComp.Contains (CurrentToken)) {
-                OperatorComp ();
+                oper = OperatorComp ();
             } else if (firstOfOperatorMath.Contains (CurrentToken)) {
-                OperatorMath ();
+                oper = OperatorMath ();
+            }
+            return oper;
+        }
+        public Node OperatorBool () {
+            switch (CurrentToken) {
+                case TokenType.OR:
+                    return new Or () { AnchorToken = Expect (TokenType.OR) };
+                case TokenType.AND:
+                    return new And () { AnchorToken = Expect (TokenType.AND) };
+                default:
+                    throw new SyntaxError (CurrentToken, tokenStream.Current);
+            }
+        }
+        public Node OperatorComp () {
+            switch (CurrentToken) {
+                case TokenType.GT:
+                    return new Gt () { AnchorToken = Expect (TokenType.GT) };
+
+                case TokenType.GOET:
+                    return new Goet () { AnchorToken = Expect (TokenType.GOET) };
+
+                case TokenType.LT:
+                    return new Lt () { AnchorToken = Expect (TokenType.LT) };
+
+                case TokenType.LOET:
+                    return new Loet () { AnchorToken = Expect (TokenType.LOET) };
+
+                case TokenType.EQUALS:
+                    return new Equals () { AnchorToken = Expect (TokenType.EQUALS) };
+
+                case TokenType.NOT_EQUALS:
+                    return new Not_Equals () { AnchorToken = Expect (TokenType.NOT_EQUALS) };
+
+                default:
+                    throw new SyntaxError (CurrentToken, tokenStream.Current);
             }
 
         }
-        public void OperatorBool () {
-            while (firstOfOperatorBool.Contains (CurrentToken)) {
-                switch (CurrentToken) {
-                    case TokenType.OR:
-                        Expect (TokenType.OR);
-                        break;
-                    case TokenType.AND:
-                        Expect (TokenType.AND);
-                        break;
-                    default:
-                        break;
-                }
-                Expression ();
+        public Node OperatorMath () {
+            switch (CurrentToken) {
+                case TokenType.SUM:
+                    return new Sum () {
+                        AnchorToken = Expect (TokenType.SUM)
+                    };
+                case TokenType.SUB:
+                    return new Sub () {
+                        AnchorToken = Expect (TokenType.SUB)
+                    };
+                case TokenType.DIV:
+                    return new Div () {
+                        AnchorToken = Expect (TokenType.DIV)
+                    };
+                case TokenType.MUL:
+                    return new Mul () {
+                        AnchorToken = Expect (TokenType.MUL)
+                    };
+                case TokenType.MOD:
+                    return new Mod () {
+                        AnchorToken = Expect (TokenType.MOD)
+                    };
+                default:
+                    throw new SyntaxError (CurrentToken, tokenStream.Current);
             }
-        }
-        public void OperatorComp () {
-            while (firstOfOperatorComp.Contains (CurrentToken)) {
-                switch (CurrentToken) {
-                    case TokenType.GT:
-                        Expect (TokenType.GT);
-                        break;
-                    case TokenType.GOET:
-                        Expect (TokenType.GOET);
-                        break;
-                    case TokenType.LT:
-                        Expect (TokenType.LT);
-                        break;
-                    case TokenType.LOET:
-                        Expect (TokenType.LOET);
-                        break;
-                    case TokenType.EQUALS:
-                        Expect (TokenType.EQUALS);
-                        break;
-                    case TokenType.NOT_EQUALS:
-                        Expect (TokenType.NOT_EQUALS);
-                        break;
-                    default:
-                        break;
-                }
-                Expression ();
-            }
-        }
-        public void OperatorMath () {
-            while (firstOfOperatorMath.Contains (CurrentToken)) {
-                switch (CurrentToken) {
-                    case TokenType.SUM:
-                        Expect (TokenType.SUM);
-                        break;
-                    case TokenType.SUB:
-                        Expect (TokenType.SUB);
-                        break;
-                    case TokenType.DIV:
-                        Expect (TokenType.DIV);
-                        break;
-                    case TokenType.MUL:
-                        Expect (TokenType.MUL);
-                        break;
-                    case TokenType.MOD:
-                        Expect (TokenType.MOD);
-                        break;
-                    default:
-                        break;
-                }
-                Expression ();
-            }
+
         }
 
     }
