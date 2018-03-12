@@ -284,16 +284,17 @@ namespace DeepLingo {
         }
 
         public Node ExpressionUnary () {
+            var n1 = new Expression ();
             if (FirstOfExprUnary.Contains (CurrentToken)) {
                 switch (CurrentToken) {
                     case TokenType.SUM:
-                        Expect (TokenType.SUM);
+                        n1.Add (new Positive () { AnchorToken = Expect (TokenType.SUM) });
                         break;
                     case TokenType.NOT:
-                        Expect (TokenType.NOT);
+                        n1.Add (new Negative () { AnchorToken = Expect (TokenType.NOT) });
                         break;
                     case TokenType.SUB:
-                        Expect (TokenType.SUB);
+                        n1.Add (new Not () { AnchorToken = Expect (TokenType.SUB) });
                         break;
                     default:
                         break;
@@ -327,21 +328,18 @@ namespace DeepLingo {
             }
         }
         public Node Array () {
-            // No estoy muy seguro como se hace este.
-            // Ayura.
             Expect (TokenType.ARR_BEGIN);
-            Node n1;
+            Node n1 = new ArrNode ();
             if (TokenType.ARR_END != CurrentToken) {
-                n1 = Expression ();
+                n1.Add (Expression ());
                 while (TokenType.LIST == CurrentToken) {
                     Expect (TokenType.LIST);
                     var n2 = Expression ();
-                    n2.Add (n1);
-                    n1 = n2;
+                    n1.Add (n2);
                 }
             }
             Expect (TokenType.ARR_END);
-            //return n1; CREO QUE ESTO VA AQUI
+            return n1;
         }
         public Node Literal () {
             switch (CurrentToken) {
