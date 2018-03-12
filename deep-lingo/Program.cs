@@ -27,16 +27,9 @@ namespace DeepLingo {
                     var inputPath = args[0];
                     String input = File.ReadAllText (inputPath);
                     var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
-                    Console.WriteLine (String.Format (
-                        "===== Tokens from: \"{0}\" =====", inputPath));
-                    int count = 1;
-                    foreach (Token tok in new Scanner (input).Start ()) {
-                        Console.WriteLine (String.Format ("[{0}] {1}",
-                            count++, tok));
-                    }
                     var program = parser.Program ();
                     Console.WriteLine ("Syntax OK.");
-                    // Console.Write (program.ToStringTree ());
+                    Console.Write (program.ToStringTree ());
                 } catch (FileNotFoundException e) {
                     Console.Error.WriteLine (e.Message);
                     Environment.Exit (1);
