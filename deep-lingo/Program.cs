@@ -26,21 +26,17 @@ namespace DeepLingo {
                 try {
                     var inputPath = args[0];
                     String input = File.ReadAllText (inputPath);
-
-                    // Console.WriteLine (String.Format (
-                    //     "===== Tokens from: \"{0}\" =====", inputPath));
-                    // int count = 1;
-
-                    // foreach (var tok in new Scanner (input).Start ()) {
-                    //     Console.WriteLine (String.Format ("[{0}] {1}",
-                    //         count++, tok));
-                    // }
                     var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
-                    parser.Program ();
-                    // Cuando se arregle paso dos, decomentar la linea de aqui abajo.
-                    //var prog = parser.Program ();
+                    Console.WriteLine (String.Format (
+                        "===== Tokens from: \"{0}\" =====", inputPath));
+                    int count = 1;
+                    foreach (Token tok in new Scanner (input).Start ()) {
+                        Console.WriteLine (String.Format ("[{0}] {1}",
+                            count++, tok));
+                    }
+                    var program = parser.Program ();
                     Console.WriteLine ("Syntax OK.");
-                    // Parser parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
+                    // Console.Write (program.ToStringTree ());
                 } catch (FileNotFoundException e) {
                     Console.Error.WriteLine (e.Message);
                     Environment.Exit (1);

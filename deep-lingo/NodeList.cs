@@ -4,32 +4,46 @@ namespace DeepLingo {
     class Prog : Node { }
     class VarDef : Node { }
     class FunDef : Node { }
+    class Id : Node { }
     class IdList : Node { }
     class Stmt : Node { }
     class If : Node { }
     class Loop : Node { }
     class Break : Node { }
     class Assignment : Node { }
-    class Return : Node { }
-    class Increment : Node { }
-    class Decrement : Node { }
-    class FunCall : Node { }
     class Expression : Node { }
     class ExpressionUnary : Node { }
     class Array : Node { }
-    class Literal : Node { }
-    class Operator : Node { }
     class OperatorBool : Node { }
     class OperatorComp : Node { }
     class OperatorMath : Node { }
 
+    class StmtCall : Node { }
+
+    class StatementList : Node { };
+    class ElseIfList : Node { };
+    class ElseIf : Node { };
+    class Else : Node { };
+    class Literal : Node { }
+    class Operator : Node { }
+    class Return : Node { }
+
+    class Increment : Node { }
+    class Decrement : Node { }
+    class FunCall : Node { }
+    //Some expressions
+
     // More created afterwards
-    // 
+    // Expression Unary elements
+    class Identifier : Node { };
+
     class Positive : Node { }
 
     class Negative : Node { }
 
     class Not : Node { }
+
+    class True : Node { };
 
     //Array
     class ArrNode : Node { }

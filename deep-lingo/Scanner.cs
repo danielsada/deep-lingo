@@ -132,9 +132,9 @@ namespace DeepLingo {
                 new Token(m.Value, tc, row, m.Index - columnStart + 1);
             
             foreach (Match m in regex.Matches(input)) {
-                if (m.Groups["WhiteSpace"].Success 
+                if (m.Groups["WhiteSpace"].Success
                     || m.Groups["Comment"].Success) {
-                    
+                    row += m.Value.Split('\n').Length-1;
                     // Skip white space and comments.
 
                 } else if (m.Groups["Newline"].Success) {
