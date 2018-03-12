@@ -24,6 +24,12 @@ namespace DeepLingo {
     class OperatorMath : Node { }
 
     // More created afterwards
+    // 
+    class Positive : Node { }
+
+    class Negative : Node { }
+
+    class Not : Node { }
 
     //Array
     class ArrNode : Node { }
