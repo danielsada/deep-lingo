@@ -26,6 +26,13 @@ namespace DeepLingo {
                 TokenType.VAR_STRING
             };
 
+        static readonly ISet<TokenType> firstOfModifier =
+            new HashSet<TokenType> () {
+                TokenType.NOT,
+                TokenType.SUM,
+                TokenType.SUB,
+            };
+
         static readonly ISet<TokenType> firstOfOperatorBool =
             new HashSet<TokenType> () {
                 TokenType.OR,
@@ -77,7 +84,7 @@ namespace DeepLingo {
 
             if (CurrentToken == category) {
 
-                // Console.WriteLine ($"Success : Expected {category.ToString ()}, got {CurrentToken}, \n Token:{tokenStream.Current.Lexeme} ");
+                Console.WriteLine ($"Success : Expected {category.ToString ()}, got {CurrentToken}, \n Token:{tokenStream.Current.Lexeme} ");
                 Token current = tokenStream.Current;
                 tokenStream.MoveNext ();
                 return current;
@@ -98,110 +105,86 @@ namespace DeepLingo {
 
         public Node Program () {
             var programNode = new Prog ();
-            while (CurrentToken == TokenType.VAR) {
-                programNode.Add (VarDef ());
-            }
-
-            while (CurrentToken == TokenType.IDENTIFIER) {
-                programNode.Add (FunDef ());
-                Expect (TokenType.BLOCK_END);
+            while (CurrentToken == TokenType.VAR || CurrentToken == TokenType.IDENTIFIER) {
+                if (CurrentToken == TokenType.IDENTIFIER) {
+                    programNode.Add (FunctionDefinition ());
+                    Expect (TokenType.BLOCK_END);
+                } else {
+                    programNode.Add (VariableDefinition ());
+                }
             }
 
             Expect (TokenType.EOF);
-            foreach (var child in programNode.children) {
-                Console.WriteLine (child);
-            }
             // Console.WriteLine (programNode.ToString ());
             return programNode;
         }
 
-        public Node VarDef () {
-            var vardef = new VarDef () { AnchorToken = Expect (TokenType.VAR) };
-            vardef.Add (IdList ());
+        public Node VariableDefinition () {
+            Expect (TokenType.VAR);
+            var n1 = VariableList ();
             Expect (TokenType.INSTRUCTION_END);
-            return vardef;
+            return n1;
         }
 
-        public Node FunDef () {
-            var fundef = new FunDef ();
-            Expect (TokenType.IDENTIFIER);
+        public Node FunctionDefinition () {
+            var fundef = new FunctionDefinition ();
+            fundef.AnchorToken = Expect (TokenType.IDENTIFIER);
             Expect (TokenType.PARENTHESIS_OPEN);
             if (CurrentToken != TokenType.PARENTHESIS_CLOSE) {
-                fundef.Add (IdList ());
+                fundef.Add (ParameterList ());
             }
             Expect (TokenType.PARENTHESIS_CLOSE);
             Expect (TokenType.BLOCK_BEGIN);
             while (CurrentToken == TokenType.VAR) {
-                fundef.Add (VarDef ());
+                fundef.Add (VariableDefinition ());
             }
             while (firstOfStatement.Contains (CurrentToken)) {
-                fundef.Add (Stmt ());
+                fundef.Add (Statement ());
             }
             return fundef;
 
         }
 
-        public Node IdList () {
-            var n1 = new IdList ();
-            n1.Add (new Id () { AnchorToken = Expect (TokenType.IDENTIFIER) });
+        public Node VariableList () {
+            var n1 = new VariableList ();
+            n1.Add (new Identifier () { AnchorToken = Expect (TokenType.IDENTIFIER) });
             while (CurrentToken == TokenType.LIST) {
                 Expect (TokenType.LIST);
-                n1.Add (new Id () { AnchorToken = Expect (TokenType.IDENTIFIER) });
+                n1.Add (new Identifier () { AnchorToken = Expect (TokenType.IDENTIFIER) });
+            }
+            return n1;
+        }
+        public Node ParameterList () {
+            var n1 = new ParameterList ();
+            n1.Add (new Identifier () { AnchorToken = Expect (TokenType.IDENTIFIER) });
+            while (CurrentToken == TokenType.LIST) {
+                Expect (TokenType.LIST);
+                n1.Add (new Identifier () { AnchorToken = Expect (TokenType.IDENTIFIER) });
             }
             return n1;
         }
 
-        public Node Stmt () {
-            var n1 = new Stmt ();
+        public Node Statement () {
+            var n1 = new Empty ();
             switch (CurrentToken) {
                 case TokenType.IDENTIFIER:
-                    if (CurrentToken == TokenType.PARENTHESIS_OPEN) {
-                        n1.Add (FunCall ());
-                    } else {
-                        n1.Add (StmtCall ());
-                    }
-                    break;
+                    var nx = StatementIdentifierOrFunctionCall ();
+                    // Expect (TokenType.INSTRUCTION_END);
+                    return nx;
                 case TokenType.IF:
-                    n1.Add (If ());
-                    break;
+                    return If ();
                 case TokenType.LOOP:
-                    n1.Add (Loop ());
-                    break;
+                    return Loop ();
                 case TokenType.BREAK:
-                    n1.Add (Break ());
-                    break;
+                    return Break ();
                 case TokenType.RETURN:
-                    n1.Add (Return ());
-                    break;
+                    return Return ();
                 case TokenType.INSTRUCTION_END:
                     Expect (TokenType.INSTRUCTION_END);
-                    break;
+                    return n1;
                 default:
                     throw new SyntaxError (CurrentToken, tokenStream.Current);
             }
-            return n1;
-        }
-
-        public Node StmtCall () {
-            var n1 = new StmtCall ();
-            Expect (TokenType.IDENTIFIER);
-            switch (CurrentToken) {
-                case (TokenType.INCR):
-                    n1.Add (Increment ());
-                    break;
-                case (TokenType.DECR):
-                    n1.Add (Decrement ());
-                    break;
-                case (TokenType.ASSIGN):
-                    n1.Add (Assignment ());
-                    break;
-                case (TokenType.PARENTHESIS_OPEN):
-                    n1.Add (FunCall ());
-                    Expect (TokenType.INSTRUCTION_END);
-                    break;
-            }
-            return n1;
-
         }
 
         public Node If () {
@@ -213,7 +196,7 @@ namespace DeepLingo {
             Expect (TokenType.BLOCK_BEGIN);
             var n2 = new StatementList ();
             while (firstOfStatement.Contains (CurrentToken)) {
-                n2.Add (Stmt ());
+                n2.Add (Statement ());
             }
             n1.Add (n2);
             var n3 = new ElseIfList ();
@@ -227,7 +210,7 @@ namespace DeepLingo {
                 Expect (TokenType.BLOCK_BEGIN);
                 var stmtList = new StatementList ();
                 while (firstOfStatement.Contains (CurrentToken)) {
-                    stmtList.Add (Stmt ());
+                    stmtList.Add (Statement ());
                 }
                 nelsif.Add (stmtList);
                 n3.Add (nelsif);
@@ -240,7 +223,7 @@ namespace DeepLingo {
                 Expect (TokenType.BLOCK_BEGIN);
                 var stmtList = new StatementList ();
                 while (firstOfStatement.Contains (CurrentToken)) {
-                    stmtList.Add (Stmt ());
+                    stmtList.Add (Statement ());
                 }
                 els.Add (stmtList);
                 Expect (TokenType.BLOCK_END);
@@ -254,7 +237,7 @@ namespace DeepLingo {
             Expect (TokenType.LOOP);
             Expect (TokenType.BLOCK_BEGIN);
             while (firstOfStatement.Contains (CurrentToken)) {
-                n1.Add (Stmt ());
+                n1.Add (Statement ());
             }
             Expect (TokenType.BLOCK_END);
             return n1;
@@ -271,9 +254,9 @@ namespace DeepLingo {
             var n1 = new Assignment () { AnchorToken = Expect (TokenType.ASSIGN) };
             n1.Add (Expression ());
             // TODO: See if we remove this.
-            if (CurrentToken == TokenType.INSTRUCTION_END) {
-                Expect (TokenType.INSTRUCTION_END);
-            }
+            // if (CurrentToken == TokenType.INSTRUCTION_END) {
+            //     Expect (TokenType.INSTRUCTION_END);
+            // }
             return n1;
 
         }
@@ -287,30 +270,80 @@ namespace DeepLingo {
 
         public Node Increment () {
             var n1 = new Increment () { AnchorToken = Expect (TokenType.INCR) };
-            Expect (TokenType.INSTRUCTION_END);
             return n1;
         }
 
         public Node Decrement () {
             var n1 = new Decrement () { AnchorToken = Expect (TokenType.DECR) };
-            Expect (TokenType.INSTRUCTION_END);
             return n1;
         }
 
-        public Node FunCall () {
-            Expect (TokenType.PARENTHESIS_OPEN);
-            var n1 = new FunCall ();
-            while (firstOfSimpleExpression.Contains (CurrentToken)) {
-                n1.Add (Expression ());
-                while (CurrentToken == TokenType.LIST) {
-                    Expect (TokenType.LIST);
-                    n1.Add (Expression ());
-                }
+        public Node StatementIdentifierOrFunctionCall () {
+            var identifier = Expect (TokenType.IDENTIFIER);
+            switch (CurrentToken) {
+                case (TokenType.INCR):
+                    var incr = Increment ();
+                    incr.AnchorToken = identifier;
+                    Expect (TokenType.INSTRUCTION_END);
+                    return incr;
+                case (TokenType.DECR):
+                    var decr = Decrement ();
+                    decr.AnchorToken = identifier;
+                    Expect (TokenType.INSTRUCTION_END);
+                    return decr;
+                case (TokenType.ASSIGN):
+                    var assignment = Assignment ();
+                    assignment.AnchorToken = identifier;
+                    Expect (TokenType.INSTRUCTION_END);
+                    return assignment;
+                case (TokenType.PARENTHESIS_OPEN):
+                    Expect (TokenType.PARENTHESIS_OPEN);
+                    var stlist = StatementList ();
+                    stlist.AnchorToken = identifier;
+                    Expect (TokenType.PARENTHESIS_CLOSE);
+                    Expect (TokenType.INSTRUCTION_END);
+                    return stlist;
+                default:
+                    return new Identifier () { AnchorToken = identifier };
             }
-            Expect (TokenType.PARENTHESIS_CLOSE);
-            return n1;
+
+        }
+        public Node ExpressionIdentifierOrFunctionCall () {
+            var identifier = Expect (TokenType.IDENTIFIER);
+            if (CurrentToken == TokenType.PARENTHESIS_OPEN) {
+                var n1 = new FunctionCall ();
+                n1.AnchorToken = identifier;
+                Expect (TokenType.PARENTHESIS_OPEN);
+
+                while (firstOfSimpleExpression.Contains (CurrentToken)) {
+                    n1.Add (Expression ());
+                    while (CurrentToken == TokenType.LIST) {
+                        Expect (TokenType.LIST);
+                        n1.Add (Expression ());
+                    }
+                }
+                Expect (TokenType.PARENTHESIS_CLOSE);
+                return n1;
+            } else {
+                return new Identifier () { AnchorToken = identifier };
+            }
         }
 
+        public Node StatementList () {
+            var exprList = new FunctionCall ();
+            while (FirstOfExprUnary.Contains (CurrentToken) || CurrentToken == TokenType.LIST) {
+                if (CurrentToken == TokenType.LIST) {
+                    Expect (TokenType.LIST);
+                }
+                exprList.Add (Expression ());
+            }
+            return exprList;
+        }
+        public Node OneStatement () {
+            var exprList = new Statement ();
+            exprList.Add (Expression ());
+            return exprList;
+        }
         public Node Expression () {
             var n1 = ExpressionUnary ();
             while (firstOfOperator.Contains (CurrentToken)) {
@@ -324,56 +357,59 @@ namespace DeepLingo {
         }
 
         public Node ExpressionUnary () {
-            var n1 = new Expression ();
-            if (FirstOfExprUnary.Contains (CurrentToken)) {
+            bool hasModifier = false;
+            var modifier = new Node ();
+            if (firstOfModifier.Contains (CurrentToken)) {
+                hasModifier = true;
                 switch (CurrentToken) {
                     case TokenType.SUM:
-                        n1.Add (new Positive () { AnchorToken = Expect (TokenType.SUM) });
+                        modifier = new Positive () { AnchorToken = Expect (TokenType.SUM) };
                         break;
                     case TokenType.NOT:
-                        n1.Add (new Negative () { AnchorToken = Expect (TokenType.NOT) });
+                        modifier = new Negative () { AnchorToken = Expect (TokenType.NOT) };
                         break;
                     case TokenType.SUB:
-                        n1.Add (new Not () { AnchorToken = Expect (TokenType.SUB) });
+                        modifier = new Not () { AnchorToken = Expect (TokenType.SUB) };
                         break;
                     default:
                         break;
-
                 }
             }
             switch (CurrentToken) {
                 case TokenType.IDENTIFIER:
-                    var id = new Identifier () {
-                        AnchorToken = Expect (TokenType.IDENTIFIER)
-                    };
-
-                    if (CurrentToken == TokenType.PARENTHESIS_OPEN) {
-                        id.Add (FunCall ());
+                    var ret = ExpressionIdentifierOrFunctionCall ();
+                    if (hasModifier) {
+                        ret.Add (modifier);
                     }
-                    n1.Add (id);
-                    break;
+                    return ret;
                 case TokenType.PARENTHESIS_OPEN:
-                    n1.Add (FunCall ());
-                    break;
+                    throw new SyntaxError (TokenType.PARENTHESIS_OPEN, tokenStream.Current);
                 case TokenType.ARR_BEGIN:
-                    n1.Add (Array ());
-                    break;
+                    if (hasModifier) {
+                        throw new SyntaxError (modifier.AnchorToken.Category, modifier.AnchorToken);
+                    }
+                    return Array ();
                 case TokenType.VAR_CHAR:
                 case TokenType.VAR_INT:
                 case TokenType.VAR_STRING:
-                    n1.Add (Literal ());
-                    break;
+                    var retu = Literal ();
+                    if (hasModifier) {
+                        retu.Add (modifier);
+                    }
+                    return retu;
                 case TokenType.TRUE:
-                    n1.Add (new True () { AnchorToken = Expect (TokenType.TRUE) });
-                    break;
+                    var tru = new True () { AnchorToken = Expect (TokenType.TRUE) };
+                    if (hasModifier) {
+                        tru.Add (modifier);
+                    }
+                    return tru;
                 default:
                     throw new SyntaxError (firstOfSimpleExpression, tokenStream.Current);
             }
-            return n1;
         }
         public Node Array () {
             Expect (TokenType.ARR_BEGIN);
-            Node n1 = new ArrNode ();
+            Node n1 = new Array ();
             if (TokenType.ARR_END != CurrentToken) {
                 n1.Add (Expression ());
                 while (TokenType.LIST == CurrentToken) {

@@ -25,7 +25,7 @@ namespace DeepLingo {
               | (?<True>              [4][2]                 )
               | (?<False>             ^(?!42$)\d+            )
               | (?<Var>               [v][a][r]                        )
-              | (?<Identifier>        [a-zA-Z_0-9]+             )
+              | (?<Identifier>        [a-zA-Z_][a-zA-Z_]*             )
               | (?<IntLiteral>        \d+                    )
               | (?<CharLiteral>       (['][^\\'""]?['])|(['][\\](n|r|t|\\|'|""|u[0-9A-Fa-f]{6})['])       ) 
               | (?<StringLiteral>     \""(\\.|[^\""])*\""    )

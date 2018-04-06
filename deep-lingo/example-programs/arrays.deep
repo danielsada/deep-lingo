@@ -51,7 +51,7 @@ max_array(a) {
         if (i == n) {
             break;
         }
-        x = get(a, i)
+        x = get(a, i);
         if (x > max) {
             max = x;
         }
