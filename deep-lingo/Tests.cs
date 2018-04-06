@@ -27,8 +27,8 @@ namespace DeepLingo {
 					Console.WriteLine("NO PUSISTE 42 como TRUE :'v");
 					throw new Exception();
 				}
-				// Console.WriteLine (String.Format ("[{0}] {1}",
-				// 	count++, tok));
+				Console.WriteLine (String.Format ("[{0}] {1}",
+					count++, tok));
 			}
 			var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
 			var prog = parser.Program ();

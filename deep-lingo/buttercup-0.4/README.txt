@@ -1,4 +1,4 @@
-Buttercup compiler, version 0.3
+Buttercup compiler, version 0.4
 ===============================
 
 This program is free software. You may redistribute it under the terms of
@@ -10,6 +10,7 @@ Included in this release:
    * Lexical analysis
    * Syntactic analysis
    * AST construction
+   * Semantic analysis
     
 To build, at the terminal type:
 

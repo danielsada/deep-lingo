@@ -29,7 +29,13 @@ namespace Buttercup {
 
     class Assignment: Node {}
 
-    class Print: Node {}
+    class Print: Node {
+        // This property is set during semantic analysis
+        // and read during code generation.
+        public Type ExpressionType {
+            get; set;
+        }
+    }
 
     class If: Node {}
 

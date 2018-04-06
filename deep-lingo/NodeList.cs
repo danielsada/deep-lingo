@@ -1,12 +1,14 @@
 using System;
 
 namespace DeepLingo {
+    class Empty : Node { }
     class Prog : Node { }
-    class VarDef : Node { }
-    class FunDef : Node { }
-    class Id : Node { }
-    class IdList : Node { }
-    class Stmt : Node { }
+    class VariableDefinition : Node { }
+    class FunctionDefinition : Node { }
+    class Identifier : Node { }
+    class VariableList : Node { }
+    class ParameterList : Node { }
+
     class If : Node { }
     class Loop : Node { }
     class Break : Node { }
@@ -19,14 +21,23 @@ namespace DeepLingo {
     class OperatorMath : Node { }
 
     class StmtCall : Node { }
+    class FunctionCall : Node { }
+
+    class RootFunctionCall : Node { }
+    class StmtIdOrFunCall : Node { }
+    class ExprIdOrFunCall : Node { }
 
     class StatementList : Node { };
+    class Statement : Node { };
+    class ExpressionList : Node { };
     class ElseIfList : Node { };
     class ElseIf : Node { };
     class Else : Node { };
     class Literal : Node { }
     class Operator : Node { }
     class Return : Node { }
+
+    class IdOrFunCall : Node { }
 
     class Increment : Node { }
     class Decrement : Node { }
@@ -35,7 +46,6 @@ namespace DeepLingo {
 
     // More created afterwards
     // Expression Unary elements
-    class Identifier : Node { };
 
     class Positive : Node { }
 
@@ -46,7 +56,6 @@ namespace DeepLingo {
     class True : Node { };
 
     //Array
-    class ArrNode : Node { }
 
     //Operator Math
     class Sum : Node { }

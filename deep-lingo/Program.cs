@@ -24,8 +24,18 @@ namespace DeepLingo {
                 tests.RunTests ();
             } else {
                 try {
+                    
                     var inputPath = args[0];
                     String input = File.ReadAllText (inputPath);
+                    foreach (var tok in new Scanner (input).Start ()) {
+                        int count= 1;
+                        if(tok.Lexeme == "42" && tok.Category != TokenType.TRUE){
+                            Console.WriteLine("NO PUSISTE 42 como TRUE :'v");
+                            throw new Exception();
+                        }
+                        Console.WriteLine (String.Format ("[{0}] {1}",
+                            count++, tok));
+                    }
                     var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
                     var program = parser.Program ();
                     Console.WriteLine ("Syntax OK.");
