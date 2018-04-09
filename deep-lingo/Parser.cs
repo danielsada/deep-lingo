@@ -379,7 +379,7 @@ namespace DeepLingo {
                 case TokenType.IDENTIFIER:
                     var ret = ExpressionIdentifierOrFunctionCall ();
                     if (hasModifier) {
-                        ret.Add (modifier);
+                        modifier.Add (ret);
                     }
                     return ret;
                 case TokenType.PARENTHESIS_OPEN:
@@ -394,7 +394,7 @@ namespace DeepLingo {
                 case TokenType.VAR_STRING:
                     var retu = Literal ();
                     if (hasModifier) {
-                        retu.Add (modifier);
+                        modifier.Add (retu);
                     }
                     return retu;
                 case TokenType.TRUE:
