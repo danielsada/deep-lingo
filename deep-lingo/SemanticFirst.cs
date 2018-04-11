@@ -20,43 +20,71 @@ using System;
 using System.Collections.Generic;
 
 namespace DeepLingo {
-    public enum Type {
-        Int32
-    }
 
-    class Semantic {
+    class SemanticFirst {
 
+        IDictionary<string, int> globalFunctions;
+        IDictionary<string, int> globalVariables;
         //-----------------------------------------------------------
-        public SymbolTable Table {
-            get;
-            private set;
+        public SemanticFirst () {
+            globalFunctions = new Dictionary<string, int> ();
+            globalVariables = new Dictionary<string, int> ();
+            globalFunctions.Add ("printi", 1);
+            globalFunctions.Add ("printc", 1);
+            globalFunctions.Add ("prints", 1);
+            globalFunctions.Add ("println", 0);
+            globalFunctions.Add ("readi", 0);
+            globalFunctions.Add ("reads", 0);
+            globalFunctions.Add ("new", 1);
+            globalFunctions.Add ("size", 1);
+            globalFunctions.Add ("add", 2);
+            globalFunctions.Add ("get", 2);
+            globalFunctions.Add ("set", 3);
         }
-
-        //-----------------------------------------------------------
-        public Semantic () {
-            Table = new SymbolTable ();
-        }
-
-        //-----------------------------------------------------------
 
         public void Visit (Empty node) {
 
         }
         public void Visit (Prog node) {
+            Console.WriteLine ($"Visiting {node.GetType()}");
 
+            foreach (var child in node.children) {
+                Visit ((dynamic) child);
+            }
         }
         public void Visit (VariableDefinition node) {
+            Console.WriteLine ($"Visiting {node.GetType()}");
 
+            foreach (var child in node.children) {
+                Visit ((dynamic) child);
+            }
         }
         public void Visit (FunctionDefinition node) {
+            Console.WriteLine ($"Visiting {node.GetType()}");
+
+            if (globalFunctions.ContainsKey (node.AnchorToken.Lexeme)) {
+                throw new SemanticError ("Visit", node.AnchorToken);
+            } else {
+                globalFunctions.TryAdd (node.AnchorToken.Lexeme, 0);
+                Console.WriteLine ($"Name {node.AnchorToken.Lexeme} Added to function table");
+            }
 
         }
         public void Visit (Identifier node) {
 
         }
         public void Visit (VariableList node) {
-
+            Console.WriteLine ($"Visiting {node.GetType()}");
+            foreach (var child in node.children) {
+                if (globalVariables.ContainsKey (child.AnchorToken.Lexeme)) {
+                    throw new SemanticError ("Visit", child.AnchorToken);
+                } else {
+                    globalVariables.TryAdd (child.AnchorToken.Lexeme, 0);
+                    Console.WriteLine ($"Name {child.AnchorToken.Lexeme} Added to variable table");
+                }
+            }
         }
+
         public void Visit (ParameterList node) {
 
         }

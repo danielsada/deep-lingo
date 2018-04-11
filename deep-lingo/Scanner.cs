@@ -109,7 +109,7 @@ namespace DeepLingo {
 
             var row = 1;
             var columnStart = 0;
-            Console.WriteLine(regex.Matches(input));
+            // Console.WriteLine(regex.Matches(input));
             Func<Match, TokenType, Token> newTok = (m, tc) =>
                 new Token(m.Value, tc, row, m.Index - columnStart + 1);
             

@@ -3,6 +3,8 @@
  * (C) 2018 Ariel Ortiz, ITESM CEM
  */
 
+var a,b,c,d;
+
 // Prints all the elements in the array list referred by handle a.
 print_array(a) {
     var first, i, n;

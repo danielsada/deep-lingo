@@ -84,7 +84,7 @@ namespace DeepLingo {
 
             if (CurrentToken == category) {
 
-                Console.WriteLine ($"Success : Expected {category.ToString ()}, got {CurrentToken}, \n Token:{tokenStream.Current.Lexeme} ");
+                // Console.WriteLine ($"Success : Expected {category.ToString ()}, got {CurrentToken}, \n Token:{tokenStream.Current.Lexeme} ");
                 Token current = tokenStream.Current;
                 tokenStream.MoveNext ();
                 return current;
