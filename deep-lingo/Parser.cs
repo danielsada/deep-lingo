@@ -110,7 +110,7 @@ namespace DeepLingo {
                     programNode.Add (FunctionDefinition ());
                     Expect (TokenType.BLOCK_END);
                 } else {
-                    programNode.Add (VariableDefinition ());
+                    programNode.Add (GlobalVariableDefinition ());
                 }
             }
 
@@ -122,6 +122,13 @@ namespace DeepLingo {
         public Node VariableDefinition () {
             Expect (TokenType.VAR);
             var n1 = VariableList ();
+            Expect (TokenType.INSTRUCTION_END);
+            return n1;
+        }
+
+        public Node GlobalVariableDefinition () {
+            Expect (TokenType.VAR);
+            var n1 = GlobalVariableList ();
             Expect (TokenType.INSTRUCTION_END);
             return n1;
         }
@@ -147,6 +154,15 @@ namespace DeepLingo {
 
         public Node VariableList () {
             var n1 = new VariableList ();
+            n1.Add (new Identifier () { AnchorToken = Expect (TokenType.IDENTIFIER) });
+            while (CurrentToken == TokenType.LIST) {
+                Expect (TokenType.LIST);
+                n1.Add (new Identifier () { AnchorToken = Expect (TokenType.IDENTIFIER) });
+            }
+            return n1;
+        }
+        public Node GlobalVariableList () {
+            var n1 = new GlobalVariableList ();
             n1.Add (new Identifier () { AnchorToken = Expect (TokenType.IDENTIFIER) });
             while (CurrentToken == TokenType.LIST) {
                 Expect (TokenType.LIST);

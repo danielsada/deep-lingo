@@ -3,9 +3,12 @@ using System;
 namespace DeepLingo {
     class Empty : Node { }
     class Prog : Node { }
+    class GlobalVariableDefinition : Node { }
     class VariableDefinition : Node { }
     class FunctionDefinition : Node { }
     class Identifier : Node { }
+
+    class GlobalVariableList : Node { }
     class VariableList : Node { }
     class ParameterList : Node { }
 
