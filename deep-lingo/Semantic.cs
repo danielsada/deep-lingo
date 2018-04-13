@@ -18,40 +18,59 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DeepLingo {
 
-    class Fields {
-        public int numParams;
-        public IDictionary<string, Fields> localSymbolTable;
-        public Fields (int arity) {
-            this.numParams = arity;
+    class Variable { }
+
+    class LocalFunctionFields {
+        Boolean isParameter = false;
+        int positionInParamList = -1;
+
+        public LocalFunctionFields () { }
+
+        public LocalFunctionFields (int position) {
+            isParameter = true;
+            positionInParamList = position;
+        }
+
+    }
+    class Function {
+        public int arity { get; set; }
+        public Boolean isPredefinedFunction;
+        public IDictionary<string, LocalFunctionFields> localVariables;
+
+        public Function (int arity, Boolean isPredefinedFunction) {
+            this.arity = arity;
+            this.isPredefinedFunction = isPredefinedFunction;
+
         }
 
     }
 
     class SemanticFirst {
         private Boolean DEBUG = false;
-        public IDictionary<string, Fields> globalFunctions;
-        public IDictionary<string, Fields> globalVariables;
+        public IDictionary<string, Function> globalFunctions;
+        public IDictionary<string, Variable> globalVariables;
 
         public String currentFunction;
         //-----------------------------------------------------------
         public SemanticFirst (Boolean debug) {
             this.DEBUG = debug;
-            globalFunctions = new Dictionary<string, Fields> ();
-            globalVariables = new Dictionary<string, Fields> ();
-            globalFunctions.Add ("printi", new Fields (1));
-            globalFunctions.Add ("printc", new Fields (1));
-            globalFunctions.Add ("prints", new Fields (1));
-            globalFunctions.Add ("println", new Fields (0));
-            globalFunctions.Add ("readi", new Fields (0));
-            globalFunctions.Add ("reads", new Fields (0));
-            globalFunctions.Add ("new", new Fields (1));
-            globalFunctions.Add ("size", new Fields (1));
-            globalFunctions.Add ("add", new Fields (2));
-            globalFunctions.Add ("get", new Fields (2));
-            globalFunctions.Add ("set", new Fields (3));
+            globalFunctions = new Dictionary<string, Function> ();
+            globalVariables = new Dictionary<string, Variable> ();
+            globalFunctions.Add ("printi", new Function (1, true));
+            globalFunctions.Add ("printc", new Function (1, true));
+            globalFunctions.Add ("prints", new Function (1, true));
+            globalFunctions.Add ("println", new Function (0, true));
+            globalFunctions.Add ("readi", new Function (0, true));
+            globalFunctions.Add ("reads", new Function (0, true));
+            globalFunctions.Add ("new", new Function (1, true));
+            globalFunctions.Add ("size", new Function (1, true));
+            globalFunctions.Add ("add", new Function (2, true));
+            globalFunctions.Add ("get", new Function (2, true));
+            globalFunctions.Add ("set", new Function (3, true));
         }
 
         public void Visit (Empty node) {
@@ -88,9 +107,12 @@ namespace DeepLingo {
             if (globalFunctions.ContainsKey (node.AnchorToken.Lexeme)) {
                 throw new SemanticError ("Visit", node.AnchorToken);
             } else {
-                globalFunctions.TryAdd (node.AnchorToken.Lexeme, new Fields (0));
-                if (DEBUG) Console.WriteLine ($"Name {node.AnchorToken.Lexeme} Added to function table");
+                if (DEBUG) Console.WriteLine ($"Name {node.AnchorToken.Lexeme} saved as current function");
                 currentFunction = node.AnchorToken.Lexeme;
+                if (DEBUG) Console.WriteLine ($"Adding {currentFunction}");
+                globalFunctions.Add (currentFunction, new Function (0, false));
+                if (DEBUG) Console.WriteLine ($"Added {currentFunction} to symbolTable");
+
                 foreach (var childs in node.children) {
                     if (DEBUG) Console.WriteLine (childs);
                     Visit ((dynamic) childs);
@@ -104,11 +126,12 @@ namespace DeepLingo {
 
         public void Visit (GlobalVariableList node) {
             if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
+
             foreach (var child in node.children) {
                 if (globalVariables.ContainsKey (child.AnchorToken.Lexeme)) {
                     throw new SemanticError ("Visit", child.AnchorToken);
                 } else {
-                    globalVariables.TryAdd (child.AnchorToken.Lexeme, new Fields (0));
+                    globalVariables.TryAdd (child.AnchorToken.Lexeme, new Variable ());
                     if (DEBUG) Console.WriteLine ($"Name {child.AnchorToken.Lexeme} Added to variable table");
                 }
             }
@@ -116,8 +139,9 @@ namespace DeepLingo {
         public void Visit (VariableList node) { }
 
         public void Visit (ParameterList node) {
-            if (DEBUG) Console.WriteLine ($"Setting {currentFunction} to arity {node.children.Count}");
-            globalFunctions[currentFunction].numParams = node.children.Count;
+            if (DEBUG) Console.WriteLine ($"Changing {currentFunction} arity");
+            globalFunctions[currentFunction].arity = node.children.Count;
+            if (DEBUG) Console.WriteLine ($"Added {currentFunction} to symbolTable");
         }
         public void Visit (If node) { }
         public void Visit (Loop node) { }
@@ -143,13 +167,13 @@ namespace DeepLingo {
 
     class SemanticSecond {
         private Boolean DEBUG = false;
-        public IDictionary<string, Fields> globalFunctions;
-        public IDictionary<string, Fields> globalVariables;
+        public IDictionary<string, Function> globalFunctions;
+        public IDictionary<string, Variable> globalVariables;
 
         public String currentFunction;
         //-----------------------------------------------------------
-        public SemanticSecond (Boolean debug, IDictionary<string, Fields> globalFunctions,
-            IDictionary<string, Fields> globalVariables) {
+        public SemanticSecond (Boolean debug, IDictionary<string, Function> globalFunctions,
+            IDictionary<string, Variable> globalVariables) {
             this.DEBUG = debug;
             this.globalFunctions = globalFunctions;
             this.globalVariables = globalVariables;
@@ -159,13 +183,16 @@ namespace DeepLingo {
 
         }
         public void Visit (Prog node) {
+            if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
             foreach (var child in node.children) {
                 Visit ((dynamic) child);
             }
         }
+
         public void Visit (VariableDefinition node) {
-            if (globalFunctions[currentFunction].localSymbolTable == null) {
-                globalFunctions[currentFunction].localSymbolTable = new Dictionary<string, Fields> ();
+            if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
+            if (globalFunctions[currentFunction].localVariables == null) {
+                globalFunctions[currentFunction].localVariables = new Dictionary<string, LocalFunctionFields> ();
             }
             foreach (var child in node.children) {
                 Visit ((dynamic) child);
@@ -177,7 +204,11 @@ namespace DeepLingo {
             // Done on global pass
         }
         public void Visit (FunctionDefinition node) {
-            this.currentFunction = node.AnchorToken.Lexeme;
+            if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
+            currentFunction = node.AnchorToken.Lexeme;
+            foreach (var child in node.children) {
+                Visit ((dynamic) child);
+            }
 
         }
         public void Visit (Identifier node) {
@@ -186,10 +217,25 @@ namespace DeepLingo {
 
         public void Visit (GlobalVariableList node) { }
         public void Visit (VariableList node) {
-
+            if (globalFunctions[currentFunction].localVariables == null) {
+                globalFunctions[currentFunction].localVariables = new Dictionary<string, LocalFunctionFields> ();
+            }
+            int i = 0;
+            foreach (var child in node.children) {
+                globalFunctions[currentFunction].localVariables.Add (child.AnchorToken.Lexeme, new LocalFunctionFields (i++));
+            }
         }
 
-        public void Visit (ParameterList node) { }
+        public void Visit (ParameterList node) {
+            if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
+            if (globalFunctions[currentFunction].localVariables == null) {
+                globalFunctions[currentFunction].localVariables = new Dictionary<string, LocalFunctionFields> ();
+            }
+            int i = 0;
+            foreach (var child in node.children) {
+                globalFunctions[currentFunction].localVariables.Add (child.AnchorToken.Lexeme, new LocalFunctionFields (i++));
+            }
+        }
         public void Visit (If node) {
 
         }
@@ -199,9 +245,20 @@ namespace DeepLingo {
         public void Visit (Break node) {
 
         }
-        public void Visit (Assignment node) {
 
+        private void IdentifierExistsInLocalTable (dynamic node) {
+            foreach (var child in node.children) {
+                if (!(globalVariables.ContainsKey (node.AnchorToken.Lexeme) ||
+                        globalFunctions[currentFunction].localVariables.ContainsKey (node.AnchorToken.Lexeme))) {
+                    throw new SemanticError ("No available function for ", node.AnchorToken);
+                }
+            }
         }
+
+        public void Visit (Assignment node) {
+            IdentifierExistsInLocalTable (node);
+        }
+
         public void Visit (Expression node) {
 
         }
@@ -225,7 +282,10 @@ namespace DeepLingo {
 
         }
         public void Visit (Statement node) {
-
+            IdentifierExistsInLocalTable (node);
+            foreach (var child in node.children) {
+                Visit ((dynamic) child);
+            }
         }
         public void Visit (ElseIfList node) {
 

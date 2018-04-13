@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace DeepLingo {
 
@@ -44,38 +45,45 @@ namespace DeepLingo {
                     }
                     var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
                     var program = parser.Program ();
+
+                    Console.WriteLine ("Syntax OK.");
                     if (DEBUG) {
-                        Console.WriteLine ("Syntax OK.");
                         Console.Write (program.ToStringTree ());
                     }
+
                     var semanticFirst = new SemanticFirst (DEBUG);
-                    try {
-                        semanticFirst.Visit ((dynamic) program);
-                    } catch (SemanticError c) {
-                        Console.WriteLine ("Semantic not correct.");
-                        Console.WriteLine (c);
-                    }
-                    var semanticSecond = new SemanticSecond (DEBUG, semanticFirst.globalFunctions, semanticFirst.globalVariables);
+                    semanticFirst.Visit ((dynamic) program);
 
                     if (DEBUG) {
                         Console.WriteLine ("Global Function Table");
                         Console.WriteLine ("============");
                         foreach (var entry in semanticFirst.globalFunctions) {
                             Console.Write (entry.Key + "\t");
-                            Console.WriteLine (entry.Value.numParams);
+                            Console.WriteLine (entry.Value.arity);
                         }
                         Console.WriteLine ("Global Variable Table");
                         Console.WriteLine ("============");
                         foreach (var entry in semanticFirst.globalVariables) {
-                            Console.Write (entry.Key + "\t");
-                            Console.WriteLine (entry.Value.numParams);
+                            Console.WriteLine (entry.Key + "\t");
                         }
+                        Console.WriteLine ("Second Pass BOIS");
+                        Console.WriteLine ("============");
                     }
+
+                    var semanticSecond = new SemanticSecond (DEBUG, semanticFirst.globalFunctions, semanticFirst.globalVariables);
+                    semanticSecond.Visit ((dynamic) program);
+                    Console.WriteLine ("Semantic OK.");
+                    Console.WriteLine ("Generating Code.");
+                    Thread.Sleep (1000);
+
                 } catch (FileNotFoundException e) {
                     Console.Error.WriteLine (e.Message);
                     Environment.Exit (1);
                 } catch (SyntaxError s) {
                     Console.WriteLine (s);
+                } catch (SemanticError c) {
+                    Console.WriteLine ("Semantic not correct.");
+                    Console.WriteLine (c);
                 }
             }
         }
