@@ -212,7 +212,7 @@ namespace DeepLingo {
 
         }
         public void Visit (Identifier node) {
-
+            IdentifierExistsInLocalTable (node);
         }
 
         public void Visit (GlobalVariableList node) { }
@@ -255,9 +255,7 @@ namespace DeepLingo {
             }
         }
 
-        public void Visit (Assignment node) {
-            IdentifierExistsInLocalTable (node);
-        }
+        public void Visit (Assignment node) { }
 
         public void Visit (Expression node) {
 

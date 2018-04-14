@@ -94,7 +94,7 @@ sort_array(a) {
 }
 
 main() {
-    var array, sum, max;
+    var array, max;
     array = [73, 77, 56, 10, 14,
              54, 75, 62, 71, 10,
               3, 71, 16, 49, 66,
