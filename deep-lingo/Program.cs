@@ -29,7 +29,6 @@ namespace DeepLingo {
                 tests.RunTests ();
             } else {
                 try {
-
                     var inputPath = args[0];
                     String input = File.ReadAllText (inputPath);
                     if (DEBUG) {
@@ -83,7 +82,7 @@ namespace DeepLingo {
                     Console.WriteLine (s);
                 } catch (SemanticError c) {
                     Console.WriteLine ("Semantic not correct.");
-                    Console.WriteLine (c);
+                    Console.WriteLine (c.Message);
                 }
             }
         }

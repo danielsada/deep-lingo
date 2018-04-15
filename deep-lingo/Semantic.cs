@@ -179,6 +179,12 @@ namespace DeepLingo {
             this.globalVariables = globalVariables;
         }
 
+        public void VisitChildren (dynamic node) {
+            foreach (var child in node.children) {
+                Visit ((dynamic) child);
+            }
+        }
+
         public void Visit (Empty node) {
 
         }
@@ -194,8 +200,11 @@ namespace DeepLingo {
             if (globalFunctions[currentFunction].localVariables == null) {
                 globalFunctions[currentFunction].localVariables = new Dictionary<string, LocalFunctionFields> ();
             }
-            foreach (var child in node.children) {
-                Visit ((dynamic) child);
+            VisitChildren (node);
+            Console.WriteLine ("Local Variable Table");
+            Console.WriteLine ("============");
+            foreach (var entry in globalFunctions[currentFunction].localVariables) {
+                Console.WriteLine (entry.Key + "\t");
             }
 
         }
@@ -206,23 +215,38 @@ namespace DeepLingo {
         public void Visit (FunctionDefinition node) {
             if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
             currentFunction = node.AnchorToken.Lexeme;
-            foreach (var child in node.children) {
-                Visit ((dynamic) child);
-            }
+            VisitChildren (node);
 
         }
         public void Visit (Identifier node) {
-            IdentifierExistsInLocalTable (node);
+            if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
+            var name = node.AnchorToken.Lexeme;
+            if (!(globalFunctions[currentFunction].localVariables.ContainsKey (name) || globalVariables.ContainsKey (name))) {
+                throw new SemanticError ($"The local variable {name} doesn't exist in the global or local scope.");
+            }
+
+            VisitChildren (node);
+
         }
 
         public void Visit (GlobalVariableList node) { }
         public void Visit (VariableList node) {
+            if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
             if (globalFunctions[currentFunction].localVariables == null) {
                 globalFunctions[currentFunction].localVariables = new Dictionary<string, LocalFunctionFields> ();
             }
             int i = 0;
             foreach (var child in node.children) {
-                globalFunctions[currentFunction].localVariables.Add (child.AnchorToken.Lexeme, new LocalFunctionFields (i++));
+                globalFunctions[currentFunction].localVariables.Add (child.AnchorToken.Lexeme, new LocalFunctionFields ());
+            }
+            if (DEBUG) {
+                Console.WriteLine ($"Child node type {node.children[0].GetType()}");
+
+                Console.WriteLine ("Local Variable Table");
+                Console.WriteLine ("============");
+                foreach (var entry in globalFunctions[currentFunction].localVariables) {
+                    Console.WriteLine (entry.Key + "\t");
+                }
             }
         }
 
@@ -237,136 +261,173 @@ namespace DeepLingo {
             }
         }
         public void Visit (If node) {
-
+            VisitChildren (node);
         }
         public void Visit (Loop node) {
-
+            VisitChildren (node);
         }
         public void Visit (Break node) {
-
+            VisitChildren (node);
         }
 
-        private void IdentifierExistsInLocalTable (dynamic node) {
-            foreach (var child in node.children) {
-                if (!(globalVariables.ContainsKey (node.AnchorToken.Lexeme) ||
-                        globalFunctions[currentFunction].localVariables.ContainsKey (node.AnchorToken.Lexeme))) {
-                    throw new SemanticError ("No available function for ", node.AnchorToken);
-                }
-            }
+        public void Visit (Assignment node) {
+            VisitChildren (node);
         }
-
-        public void Visit (Assignment node) { }
 
         public void Visit (Expression node) {
-
+            VisitChildren (node);
         }
         public void Visit (ExpressionUnary node) {
-
+            VisitChildren (node);
         }
         public void Visit (Array node) {
+            VisitChildren (node);
 
         }
-        public void Visit (OperatorBool node) { }
-        public void Visit (OperatorComp node) {
+        public void Visit (OperatorBool node) {
+            VisitChildren (node);
+        }
 
+        public void Visit (OperatorComp node) {
+            VisitChildren (node);
         }
         public void Visit (OperatorMath node) {
+            VisitChildren (node);
 
         }
         public void Visit (FunctionCall node) {
+            if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
+            if (DEBUG) Console.WriteLine ($"AT {node.AnchorToken.Lexeme}");
+            if (DEBUG) Console.WriteLine ($"Children {node.children.Count}");
+            var name = node.AnchorToken.Lexeme;
+            var arity = node.children.Count;
+            if (globalFunctions.ContainsKey (name)) {
+                if (!(arity == globalFunctions[name].arity)) {
+                    throw new SemanticError ($"The function {name} should have arity of {globalFunctions[name].arity} not of {arity}");
+                }
+                VisitChildren (node);
+            } else {
+                throw new SemanticError ($"Function {name} isn't defined. Are you sure this name is correct?");
+            }
 
         }
         public void Visit (StatementList node) {
+            VisitChildren (node);
 
         }
         public void Visit (Statement node) {
-            IdentifierExistsInLocalTable (node);
-            foreach (var child in node.children) {
-                Visit ((dynamic) child);
-            }
+            VisitChildren (node);
         }
         public void Visit (ElseIfList node) {
+            VisitChildren (node);
 
         }
         public void Visit (ElseIf node) {
+            VisitChildren (node);
 
         }
         public void Visit (Else node) {
+            VisitChildren (node);
 
         }
         public void Visit (Literal node) {
+            VisitChildren (node);
 
         }
         public void Visit (Operator node) {
+            VisitChildren (node);
 
         }
         public void Visit (Return node) {
+            VisitChildren (node);
 
         }
         public void Visit (Increment node) {
+            VisitChildren (node);
 
         }
         public void Visit (Decrement node) {
+            VisitChildren (node);
 
         }
         public void Visit (Positive node) {
+            VisitChildren (node);
 
         }
         public void Visit (Negative node) {
+            VisitChildren (node);
 
         }
         public void Visit (Not node) {
+            VisitChildren (node);
 
         }
         public void Visit (True node) {
+            VisitChildren (node);
 
         }
         public void Visit (Sum node) {
+            VisitChildren (node);
 
         }
         public void Visit (Sub node) {
+            VisitChildren (node);
 
         }
         public void Visit (Div node) {
+            VisitChildren (node);
 
         }
         public void Visit (Mul node) {
+            VisitChildren (node);
 
         }
         public void Visit (Mod node) {
+            VisitChildren (node);
 
         }
         public void Visit (Gt node) {
+            VisitChildren (node);
 
         }
         public void Visit (Goet node) {
+            VisitChildren (node);
 
         }
         public void Visit (Lt node) {
+            VisitChildren (node);
 
         }
         public void Visit (Loet node) {
+            VisitChildren (node);
 
         }
         public void Visit (Equals node) {
+            VisitChildren (node);
 
         }
         public void Visit (Not_Equals node) {
+            VisitChildren (node);
 
         }
         public void Visit (Or node) {
+            VisitChildren (node);
 
         }
         public void Visit (And node) {
+            VisitChildren (node);
 
         }
         public void Visit (VarInt node) {
+            VisitChildren (node);
 
         }
         public void Visit (VarChar node) {
+            VisitChildren (node);
 
         }
         public void Visit (VarString node) {
+            VisitChildren (node);
 
         }
     }
