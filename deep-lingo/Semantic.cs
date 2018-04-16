@@ -105,7 +105,7 @@ namespace DeepLingo {
             if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
 
             if (globalFunctions.ContainsKey (node.AnchorToken.Lexeme)) {
-                throw new SemanticError ("Visit", node.AnchorToken);
+                throw new SemanticError ("This function already exists, you can't have two functions with the same name", node.AnchorToken);
             } else {
                 if (DEBUG) Console.WriteLine ($"Name {node.AnchorToken.Lexeme} saved as current function");
                 currentFunction = node.AnchorToken.Lexeme;
@@ -129,7 +129,7 @@ namespace DeepLingo {
 
             foreach (var child in node.children) {
                 if (globalVariables.ContainsKey (child.AnchorToken.Lexeme)) {
-                    throw new SemanticError ("Visit", child.AnchorToken);
+                    throw new SemanticError ("This variable already exists, you can't have two of the same variable.", child.AnchorToken);
                 } else {
                     globalVariables.TryAdd (child.AnchorToken.Lexeme, new Variable ());
                     if (DEBUG) Console.WriteLine ($"Name {child.AnchorToken.Lexeme} Added to variable table");
@@ -201,8 +201,11 @@ namespace DeepLingo {
                 globalFunctions[currentFunction].localVariables = new Dictionary<string, LocalFunctionFields> ();
             }
             VisitChildren (node);
-            Console.WriteLine ("Local Variable Table");
-            Console.WriteLine ("============");
+            if (DEBUG) {
+                Console.WriteLine ("Local Variable Table");
+                Console.WriteLine ("============");
+            }
+
             foreach (var entry in globalFunctions[currentFunction].localVariables) {
                 Console.WriteLine (entry.Key + "\t");
             }
@@ -237,6 +240,9 @@ namespace DeepLingo {
             }
             int i = 0;
             foreach (var child in node.children) {
+                if (globalFunctions[currentFunction].localVariables.ContainsKey (child.AnchorToken.Lexeme)) {
+                    throw new SemanticError ("You can't have two variables of the same name inside your function");
+                }
                 globalFunctions[currentFunction].localVariables.Add (child.AnchorToken.Lexeme, new LocalFunctionFields ());
             }
             if (DEBUG) {

@@ -5,9 +5,8 @@
  */
 
 main() {
-    var b;
     prints("The answer to the ultimate question of life, ");
     prints("the universe, and everything: ");
     printi(!0);
-    printi(b);
+    println();
 }
