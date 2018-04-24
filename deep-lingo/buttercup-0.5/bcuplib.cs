@@ -1,7 +1,15 @@
 /*
-  Buttercup compiler - Semantic error exception class.
+  Buttercup runtime library.
   Copyright (C) 2013 Ariel Ortiz, ITESM CEM
-  
+
+  To compile this module as a DLL:
+
+                mcs /t:library bcuplib.cs
+
+  To link this DLL to a program written in C#:
+
+                mcs /r:bcuplib.dll someprogram.cs
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -16,18 +24,20 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Collections;
 
-namespace DeepLingo {
+namespace Buttercup {
+    
+    using System;
 
-    class SemanticError : Exception {
+    public class Utils {
 
-        public SemanticError (string message, Token token):
-            base (String.Format (
-                "Semantic Error: {0} \n" +
-                "at row {1}, column {2}.",
-                message,
-                token.Row,
-                token.Column)) { }
+        public static void Print(int i) {
+            Console.WriteLine(i);
+        }
+        
+        public static void Print(bool b) {
+            Console.WriteLine(b ? "#t" : "#f");
+        }
     }
 }

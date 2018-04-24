@@ -83,7 +83,7 @@ namespace DeepLingo {
                 Visit ((dynamic) child);
             }
             if (!globalFunctions.ContainsKey ("main")) {
-                throw new SemanticError ("You didn't specify a main function");
+                throw new SemanticError ("You didn't specify a main function", node.AnchorToken);
             }
         }
         public void Visit (VariableDefinition node) {
@@ -169,6 +169,7 @@ namespace DeepLingo {
         private Boolean DEBUG = false;
         public IDictionary<string, Function> globalFunctions;
         public IDictionary<string, Variable> globalVariables;
+        public int loopCount = 0;
 
         public String currentFunction;
         //-----------------------------------------------------------
@@ -225,7 +226,7 @@ namespace DeepLingo {
             if (DEBUG) Console.WriteLine ($"Visiting {node.GetType()}");
             var name = node.AnchorToken.Lexeme;
             if (!(globalFunctions[currentFunction].localVariables.ContainsKey (name) || globalVariables.ContainsKey (name))) {
-                throw new SemanticError ($"The local variable {name} doesn't exist in the global or local scope.");
+                throw new SemanticError ($"The local variable {name} doesn't exist in the global or local scope.", node.AnchorToken);
             }
 
             VisitChildren (node);
@@ -241,7 +242,7 @@ namespace DeepLingo {
             int i = 0;
             foreach (var child in node.children) {
                 if (globalFunctions[currentFunction].localVariables.ContainsKey (child.AnchorToken.Lexeme)) {
-                    throw new SemanticError ("You can't have two variables of the same name inside your function");
+                    throw new SemanticError ("You can't have two variables of the same name inside your function", node.AnchorToken);
                 }
                 globalFunctions[currentFunction].localVariables.Add (child.AnchorToken.Lexeme, new LocalFunctionFields ());
             }
@@ -270,9 +271,14 @@ namespace DeepLingo {
             VisitChildren (node);
         }
         public void Visit (Loop node) {
+            loopCount++;
             VisitChildren (node);
+            loopCount--;
         }
         public void Visit (Break node) {
+            if (loopCount == 0) {
+                throw new SemanticError ("There is no loop to break here", node.AnchorToken);
+            }
             VisitChildren (node);
         }
 
@@ -309,11 +315,11 @@ namespace DeepLingo {
             var arity = node.children.Count;
             if (globalFunctions.ContainsKey (name)) {
                 if (!(arity == globalFunctions[name].arity)) {
-                    throw new SemanticError ($"The function {name} should have arity of {globalFunctions[name].arity} not of {arity}");
+                    throw new SemanticError ($"The function {name} should have arity of {globalFunctions[name].arity} not of {arity}", node.AnchorToken);
                 }
                 VisitChildren (node);
             } else {
-                throw new SemanticError ($"Function {name} isn't defined. Are you sure this name is correct?");
+                throw new SemanticError ($"Function {name} isn't defined. Are you sure this name is correct?", node.AnchorToken);
             }
 
         }

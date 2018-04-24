@@ -24,14 +24,15 @@ namespace Buttercup {
 
     public class Driver {
 
-        const string VERSION = "0.4";
+        const string VERSION = "0.5";
 
         //-----------------------------------------------------------
         static readonly string[] ReleaseIncludes = {
             "Lexical analysis",
             "Syntactic analysis",
             "AST construction",
-            "Semantic analysis"
+            "Semantic analysis",
+            "CIL code generation"
         };
 
         //-----------------------------------------------------------
@@ -62,29 +63,30 @@ namespace Buttercup {
             PrintReleaseIncludes();
             Console.WriteLine();
 
-            if (args.Length != 1) {
-                Console.Error.WriteLine(
-                    "Please specify the name of the input file.");
+            if (args.Length != 2) {
+                Console.Error.WriteLine("Please specify the name of the input and output files.");
                 Environment.Exit(1);
             }
 
             try {            
-                var inputPath = args[0];                
+                var inputPath = args[0];
+                var outputPath = args[1];
                 var input = File.ReadAllText(inputPath);
                 var parser = new Parser(new Scanner(input).Start().GetEnumerator());
-                var program = parser.Program();
+                var ast = parser.Program();
                 Console.WriteLine("Syntax OK.");
 
                 var semantic = new SemanticAnalyzer();
-                semantic.Visit((dynamic) program);
-
+                semantic.Visit((dynamic) ast);
                 Console.WriteLine("Semantics OK.");
+
+                var codeGenerator = new CILGenerator(semantic.Table);
+                File.WriteAllText(
+                    outputPath,
+                    codeGenerator.Visit((dynamic) ast));
+                Console.WriteLine(
+                    "Generated CIL code to '" + outputPath + "'.");
                 Console.WriteLine();
-                Console.WriteLine("Symbol Table");
-                Console.WriteLine("============");
-                foreach (var entry in semantic.Table) {
-                    Console.WriteLine(entry);                        
-                }
 
             } catch (Exception e) {
 

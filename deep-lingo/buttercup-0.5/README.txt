@@ -1,4 +1,4 @@
-Buttercup compiler, version 0.4
+Buttercup compiler, version 0.5
 ===============================
 
 This program is free software. You may redistribute it under the terms of
@@ -11,6 +11,7 @@ Included in this release:
    * Syntactic analysis
    * AST construction
    * Semantic analysis
+   * CIL code generation
     
 To build, at the terminal type:
 
@@ -18,7 +19,7 @@ To build, at the terminal type:
    
 To run, type:
 
-    ./buttercup.exe <file_name>
+    ./bcupc <file_name>
     
 Where <file_name> is the name of a Buttercup source file. You can try with
 these files:

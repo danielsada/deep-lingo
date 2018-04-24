@@ -16,12 +16,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+all: buttercup.exe bcuplib.dll
+
 buttercup.exe: Driver.cs Scanner.cs Token.cs TokenCategory.cs Parser.cs \
 	SyntaxError.cs Node.cs SpecificNodes.cs SemanticAnalyzer.cs \
-	Type.cs SemanticError.cs SymbolTable.cs
+	Type.cs SemanticError.cs SymbolTable.cs CILGenerator.cs
 	mcs -out:buttercup.exe Driver.cs Scanner.cs Token.cs TokenCategory.cs \
 	Parser.cs SyntaxError.cs Node.cs SpecificNodes.cs SemanticAnalyzer.cs \
-	Type.cs SemanticError.cs SymbolTable.cs
+	Type.cs SemanticError.cs SymbolTable.cs CILGenerator.cs
 			
+bcuplib.dll: bcuplib.cs 
+	mcs /t:library bcuplib.cs
+        
 clean:
-	rm buttercup.exe
+	rm buttercup.exe bcuplib.dll
