@@ -73,6 +73,8 @@ namespace DeepLingo {
                     semanticSecond.Visit ((dynamic) program);
                     Console.WriteLine ("Semantic OK.");
                     Console.WriteLine ("Generating Code.");
+                    var cilGenerator = new CILGenerator(semanticFirst.globalFunctions, semanticFirst.globalVariables);
+                    Console.Write(cilGenerator.Visit ((dynamic) program));
                     Thread.Sleep (1000);
 
                 } catch (FileNotFoundException e) {

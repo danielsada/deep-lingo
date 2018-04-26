@@ -20,12 +20,12 @@
 
 deeplingo.exe: Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs Parser.cs SyntaxError.cs Node.cs NodeList.cs Semantic.cs SemanticError.cs
 	rm -f deeplingo.exe
-	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs Parser.cs SyntaxError.cs Node.cs NodeList.cs Semantic.cs SemanticError.cs
+	mcs /r:deeplingolib.dll -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs Parser.cs SyntaxError.cs Node.cs NodeList.cs Semantic.cs SemanticError.cs CilGenerator.cs
 	chmod +x deeplingo.exe
 
 test: 
 	rm -f deeplingo.exe
-	mcs -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs Parser.cs SyntaxError.cs Node.cs NodeList.cs Semantic.cs SemanticError.cs
+	mcs /r:deeplingolib.dll -out:deeplingo.exe Program.cs Scanner.cs Token.cs TokenType.cs Tests.cs Parser.cs SyntaxError.cs Node.cs NodeList.cs Semantic.cs SemanticError.cs CilGenerator.cs
 	chmod +x deeplingo.exe
 	mono deeplingo.exe "test"
 
