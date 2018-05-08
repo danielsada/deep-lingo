@@ -396,6 +396,7 @@ namespace DeepLingo {
                     var ret = ExpressionIdentifierOrFunctionCall ();
                     if (hasModifier) {
                         modifier.Add (ret);
+                        ret = modifier;
                     }
                     return ret;
                 case TokenType.PARENTHESIS_OPEN:
@@ -411,12 +412,14 @@ namespace DeepLingo {
                     var retu = Literal ();
                     if (hasModifier) {
                         modifier.Add (retu);
+                        retu = modifier;
                     }
                     return retu;
                 case TokenType.TRUE:
-                    var tru = new True () { AnchorToken = Expect (TokenType.TRUE) };
+                    var tru = True ();
                     if (hasModifier) {
-                        tru.Add (modifier);
+                        modifier.Add (tru);
+                        tru = modifier;
                     }
                     return tru;
                 default:
@@ -523,6 +526,11 @@ namespace DeepLingo {
                     throw new SyntaxError (CurrentToken, tokenStream.Current);
             }
 
+        }
+        public Node True(){
+            var n = new True();
+            n.AnchorToken = Expect (TokenType.TRUE);
+            return n;
         }
 
     }

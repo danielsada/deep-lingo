@@ -165,6 +165,16 @@ namespace DeepLingo {
             return result;
         }
 
+
+
+        public static int Conv(string input) {
+            int handle = New(0);
+            foreach (int i in AsCodePoints(input)) {
+                Add(handle, i);
+            }
+            return handle;
+        }
+
         //----------------------------------------------------------------------
         // Local function that checks if h is a valid array list handle.
         private static void CheckHandle(int h) {

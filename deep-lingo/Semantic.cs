@@ -25,7 +25,7 @@ namespace DeepLingo {
     class Variable { }
 
     class LocalFunctionFields {
-        Boolean isParameter = false;
+        public Boolean isParameter = false;
         int positionInParamList = -1;
 
         public LocalFunctionFields () { }
@@ -252,7 +252,7 @@ namespace DeepLingo {
                 Console.WriteLine ("Local Variable Table");
                 Console.WriteLine ("============");
                 foreach (var entry in globalFunctions[currentFunction].localVariables) {
-                    Console.WriteLine (entry.Key + "\t");
+                    Console.WriteLine (entry.Key + "\t => "+ entry.Value.isParameter.ToString());
                 }
             }
         }

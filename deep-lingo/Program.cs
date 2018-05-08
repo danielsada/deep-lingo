@@ -1,3 +1,6 @@
+
+// Daniel Sada Caraveo A01169735
+
 using System;
 using System.IO;
 using System.Text;
@@ -12,7 +15,7 @@ namespace DeepLingo {
 
         void Run (string[] args) {
 
-            Console.WriteLine ("Don't panic, use deep lingo");
+            // Console.WriteLine ("Don't panic, use deep lingo");
             Console.WriteLine ();
 
             if (args.Length < 1) {
@@ -45,7 +48,7 @@ namespace DeepLingo {
                     var parser = new Parser (new Scanner (input).Start ().GetEnumerator ());
                     var program = parser.Program ();
 
-                    Console.WriteLine ("Syntax OK.");
+                    // Console.WriteLine ("Syntax OK.");
                     if (DEBUG) {
                         Console.Write (program.ToStringTree ());
                     }
@@ -71,8 +74,8 @@ namespace DeepLingo {
 
                     var semanticSecond = new SemanticSecond (DEBUG, semanticFirst.globalFunctions, semanticFirst.globalVariables);
                     semanticSecond.Visit ((dynamic) program);
-                    Console.WriteLine ("Semantic OK.");
-                    Console.WriteLine ("Generating Code.");
+                    // Console.WriteLine ("Semantic OK.");
+                    // Console.WriteLine ("Generating Code.");
                     var cilGenerator = new CILGenerator(semanticFirst.globalFunctions, semanticFirst.globalVariables);
                     Console.Write(cilGenerator.Visit ((dynamic) program));
                     Thread.Sleep (1000);

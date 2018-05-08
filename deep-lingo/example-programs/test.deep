@@ -1,0 +1,11 @@
+
+main() {
+    var i;
+    i = 2;
+    if(i < 2){
+        printi(40);
+    } else {
+        printi(20);
+    }
+    printi(60);
+}
